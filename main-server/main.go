@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -28,11 +29,35 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("its all ok"))
 }
 
+// Получение списка комнат, доступных пользователю
+// Выводит либо все группы, либо только те, которые можно удалять
+func handleGetRooms(w http.ResponseWriter, r *http.Request) {
+	// Получаем инфу о том, какой список надо вывести
+	role := strings.Split(r.URL.Path, "/")[2]
+	var res string
+
+	// Ниже будут запросы в бд для комнат
+	switch role {
+	case "reader":
+		res = "reader's rooms"
+	case "moderator":
+		res = "moderator's rooms"
+	case "admin":
+		res = "admin's rooms"
+	default:
+		res = "No rooms"
+	}
+
+	w.Write([]byte(res))
+}
+
 func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/createRoom", handleCreateRoom).
 		Methods("POST")
+	r.HandleFunc("/rooms/{role}", handleGetRooms).
+		Methods("GET")
 
 	fmt.Println("starting server at :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
