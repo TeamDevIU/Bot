@@ -8,6 +8,7 @@ type CreateRoom struct {
 
 // TelegramUserInfo для парсинга инфы о пользователе
 type TelegramUserInfo struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID      int    `json:"id"`
+	Name    string `json:"name"`
+	BotType string `json:"type"`
 }

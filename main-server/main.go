@@ -6,10 +6,35 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gorilla/mux"
 )
+
+var (
+	TelegramBotAdr string
+	VKBotAdr       string
+)
+
+func initBotAdresses(w http.ResponseWriter, r *http.Request) {
+	botType := r.URL.Path[1:]
+	var res string
+	switch botType {
+	case "tg":
+		TelegramBotAdr = r.RemoteAddr
+		res = "Telegram bot registration success."
+	case "vk":
+		VKBotAdr = r.RemoteAddr
+		res = "VK bot registration success."
+	default:
+		res = "Unknown bot type."
+	}
+
+	w.Write([]byte(res))
+}
+
+//127.0.0.1:8080/vk
 
 // Создание комнаты
 func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
@@ -54,12 +79,15 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 func main() {
 	r := mux.NewRouter()
 
+	port := os.Getenv("APP-PORT")
+
+	r.HandleFunc("/{bot-type}", initBotAdresses).
+		Methods("GET")
 	r.HandleFunc("/createRoom", handleCreateRoom).
 		Methods("POST")
 	r.HandleFunc("/rooms/{role}", handleGetRooms).
 		Methods("GET")
 
-	fmt.Println("starting server at :8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
-
+	fmt.Println("starting server at :" + port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
