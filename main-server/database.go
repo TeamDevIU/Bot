@@ -71,3 +71,42 @@ func createTables(db *sql.DB) error {
 
 	return nil
 }
+
+func (db *Database) createUser(user *UserInfo) (int32, error) {
+	rows, err := db.Query("SELECT id FROM users WHERE bot_id = $1 AND bot_type = $2",
+		user.ID, user.BotType)
+	if err != nil {
+		return -1, err
+	}
+
+	var id int32
+	id = -1
+	for rows.Next() {
+		rows.Scan(&id)
+	}
+
+	if id == -1 {
+		row := db.QueryRow("INSERT INTO users (bot_id, name, bot_type) VALUES ($1, $2, $3) RETURNING id",
+			user.ID, user.Name, user.BotType)
+		if err := row.Scan(&id); err != nil {
+			return -1, err
+		}
+	}
+	return id, nil
+}
+
+func (db *Database) createRoom(room *CreateRoom) (int32, error) {
+	adminID, err := db.createUser(&room.UserInfo)
+	if err != nil {
+		return -1, err
+	}
+
+	row := db.QueryRow("INSERT INTO rooms (name, admin_id) VALUES ($1, $2) RETURNING id",
+		room.RoomName, adminID)
+	var id int32
+	if err := row.Scan(&id); err != nil {
+		return -1, err
+	}
+
+	return id, nil
+}

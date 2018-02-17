@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -48,9 +49,16 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 
 	// Получили инфу о новой комнате и "авторе комнаты"
 	// Тут ее надо запихать в бд и вернуть id комнаты
-	fmt.Println(string(body), "\n", createRoom)
-
-	w.Write([]byte("its all ok"))
+	roomID, err := db.createRoom(createRoom)
+	if err == nil {
+		err = errors.New("none")
+	}
+	resp := &CreateRoomResponse{
+		ID:  roomID,
+		Err: err.Error(),
+	}
+	respBody, _ := json.Marshal(resp)
+	w.Write(respBody)
 }
 
 // Получение списка комнат, доступных пользователю
