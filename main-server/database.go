@@ -110,3 +110,21 @@ func (db *Database) createRoom(room *CreateRoom) (int32, error) {
 
 	return id, nil
 }
+
+func (db *Database) getAdminRooms(adminID int, botType string) ([]RoomInfo, error) {
+	result := []RoomInfo{}
+
+	rows, err := db.Query("SELECT id, name FROM rooms WHERE admin_id = (SELECT id FROM users WHERE bot_id = $1 AND bot_type = $2)", adminID, botType)
+	if err != nil {
+		return nil, err
+	}
+
+	currInfo := RoomInfo{}
+	for rows.Next() {
+		rows.Scan(&currInfo.ID, &currInfo.Name)
+
+		result = append(result, currInfo)
+	}
+
+	return result, nil
+}

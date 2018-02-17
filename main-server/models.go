@@ -17,3 +17,13 @@ type CreateRoomResponse struct {
 	ID  int32  `json:"room_id"`
 	Err string `json:"error"`
 }
+
+type RoomInfo struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type GetRoomsResponse struct {
+	Rooms []RoomInfo `json:"rooms"`
+	Err   string     `json:"error"`
+}

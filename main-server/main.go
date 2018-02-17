@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -66,21 +67,32 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 	// Получаем инфу о том, какой список надо вывести
 	role := strings.Split(r.URL.Path, "/")[2]
-	var res string
-
-	// Ниже будут запросы в бд для комнат
-	switch role {
-	case "reader":
-		res = "reader's rooms"
-	case "moderator":
-		res = "moderator's rooms"
-	case "admin":
-		res = "admin's rooms"
-	default:
-		res = "No rooms"
+	userID, err := strconv.Atoi(strings.Split(r.URL.Path, "/")[3])
+	botType := strings.Split(r.URL.Path, "/")[4]
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
 	}
 
-	w.Write([]byte(res))
+	// Ниже будут запросы в бд для комнат
+	var rooms []RoomInfo
+	switch role {
+	case "reader":
+	case "moderator":
+	case "admin":
+		rooms, err = db.getAdminRooms(userID, botType)
+	default:
+	}
+
+	if err == nil {
+		err = errors.New("none")
+	}
+	resp := &GetRoomsResponse{
+		Rooms: rooms,
+		Err:   err.Error(),
+	}
+	respBody, _ := json.Marshal(resp)
+	w.Write(respBody)
 }
 
 func main() {
@@ -98,7 +110,7 @@ func main() {
 		Methods("GET")
 	r.HandleFunc("/createRoom", handleCreateRoom).
 		Methods("POST")
-	r.HandleFunc("/rooms/{role}", handleGetRooms).
+	r.HandleFunc("/rooms/{role}/{id}/{bot}", handleGetRooms).
 		Methods("GET")
 
 	fmt.Println("starting server at :" + port)
