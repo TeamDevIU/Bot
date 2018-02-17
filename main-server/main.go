@@ -15,6 +15,7 @@ import (
 var (
 	TelegramBotAdr string
 	VKBotAdr       string
+	db             *Database
 )
 
 func initBotAdresses(w http.ResponseWriter, r *http.Request) {
@@ -33,8 +34,6 @@ func initBotAdresses(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte(res))
 }
-
-//127.0.0.1:8080/vk
 
 // Создание комнаты
 func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
@@ -77,9 +76,15 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	var err error
+
+	if db, err = SetUpDatabase(); err != nil {
+		panic(err)
+	}
+
 	r := mux.NewRouter()
 
-	port := os.Getenv("APP-PORT")
+	port := os.Getenv("APPPORT")
 
 	r.HandleFunc("/{bot-type}", initBotAdresses).
 		Methods("GET")
