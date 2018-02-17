@@ -29,9 +29,12 @@ class AudioMessageHandler extends BaseHandler{
                 req.on('error',errorFunc);
                 req.end();
             }), function (err) {
+
+                console.log("Ошибка распознования аудио");
                 errorFunc(err);
             });
         }).on('error', (e) => {
+            console.log("Ошибка получения аудио");
             errorFunc(e);
         });
 

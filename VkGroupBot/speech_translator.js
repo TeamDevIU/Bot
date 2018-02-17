@@ -13,25 +13,19 @@ class SpeechTranslator {
             topic: 'queries'
         }, function (err, httpResponse, xml) {
             if (err) {
+                console.log("Ошибка ASR")
                 onError(err);
             } else {
                 let json = JSON.parse(xml2json.toJson(xml));
                 let success = Number.parseInt(json.recognitionResults.success);
                 if(success > 0){
-                    if(success === 1){
-                        onResponse(json.recognitionResults.variant.$t);
+                    if(Array.isArray(json.recognitionResults.variant)){
+                        onResponse(json.recognitionResults.variant[0].$t);
                     } else {
-                        let max_variant;
-                        max_variant.confidence = 0;
-                        for (let variant in json.recognitionResults.variant){
-                            if(variant.confidence > max_variant.confidence){
-                                max_variant = variant;
-                            }
-                        }
-                        onResponse(max_variant.$t);
+                        onResponse(json.recognitionResults.variant.$t);
                     }
-
                 } else {
+                    console.log("не распознал")
                     onResponse("")
                 }
             }

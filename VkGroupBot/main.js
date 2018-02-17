@@ -1,6 +1,7 @@
 const MessageParser = require('./message_parser');
 const TextMessageHandler = require('./text_message_handler');
 const AudioMessageHandler = require('./audio_message_handler');
+const UserCommandHandler = require('./UserCommandHandler');
 let apiai = require('apiai');
 let dialogflow = apiai(process.env.DIALOGFLOW_CLIENT_ID);
 const VK = require('vk-node-sdk');
@@ -21,7 +22,7 @@ Group.onMessage((message) => {
         }
     }
     handler.execute('1234',async function (response) {
-        m.messageObject.addText(response.result.fulfillment.speech).send();
+        UserCommandHandler.calculate(response,m.messageObject);
     }, async function (error) {
         m.messageObject.addText('у меня ошибки какие-то: '+ JSON.stringify(error)).send()
     })
