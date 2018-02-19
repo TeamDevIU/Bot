@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -66,9 +65,9 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 // Выводит либо все группы, либо только те, которые можно удалять
 func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 	// Получаем инфу о том, какой список надо вывести
-	role := strings.Split(r.URL.Path, "/")[2]
-	userID, err := strconv.Atoi(strings.Split(r.URL.Path, "/")[3])
-	botType := strings.Split(r.URL.Path, "/")[4]
+	role := r.URL.Query().Get("role")
+	userID, err := strconv.Atoi(r.URL.Query().Get("userID"))
+	botType := r.URL.Query().Get("botType")
 	if err != nil {
 		w.Write([]byte(err.Error()))
 		return
@@ -95,6 +94,35 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 	w.Write(respBody)
 }
 
+// Подписка юзера на комнату
+func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
+	body, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	subscribe := new(Subscribe)
+	err := json.Unmarshal(body, subscribe)
+	if err != nil {
+		resp := &ErrorResponse{
+			Err: "Some troubles with request body",
+		}
+		respBody, _ := json.Marshal(resp)
+		w.Write(respBody)
+		return
+	}
+
+	err = db.subscribe(subscribe)
+	if err == nil {
+		err = errors.New("none")
+	}
+
+	resp := &ErrorResponse{
+		Err: err.Error(),
+	}
+	respBody, _ := json.Marshal(resp)
+	w.Write(respBody)
+	return
+}
+
 func main() {
 	var err error
 
@@ -106,11 +134,13 @@ func main() {
 
 	port := os.Getenv("APPPORT")
 
-	r.HandleFunc("/{bot-type}", initBotAdresses).
-		Methods("GET")
 	r.HandleFunc("/createRoom", handleCreateRoom).
 		Methods("POST")
-	r.HandleFunc("/rooms/{role}/{id}/{bot}", handleGetRooms).
+	r.HandleFunc("/rooms", handleGetRooms).
+		Methods("GET")
+	r.HandleFunc("/subscribe", handeNewSubscribe).
+		Methods("POST")
+	r.HandleFunc("/{bot-type}", initBotAdresses).
 		Methods("GET")
 
 	fmt.Println("starting server at :" + port)

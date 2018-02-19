@@ -6,6 +6,16 @@ type CreateRoom struct {
 	UserInfo UserInfo `json:"ownerInfo"`
 }
 
+// Subscribe для парсинга запроса на подписывание
+type Subscribe struct {
+	RoomID   int      `json:"roomID"`
+	UserInfo UserInfo `json:"userInfo"`
+}
+
+type ErrorResponse struct {
+	Err string `json:"error"`
+}
+
 // UserInfo для парсинга инфы о пользователе
 type UserInfo struct {
 	ID      int    `json:"id"`

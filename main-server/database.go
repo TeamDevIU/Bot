@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	_ "github.com/lib/pq"
@@ -127,4 +128,31 @@ func (db *Database) getAdminRooms(adminID int, botType string) ([]RoomInfo, erro
 	}
 
 	return result, nil
+}
+
+func (db *Database) subscribe(sub *Subscribe) error {
+	userID, err := db.createUser(&sub.UserInfo)
+	if err != nil {
+		return err
+	}
+
+	// Проверка не является ли юзер админом выбранной комнаты
+	rows, err := db.Query("SELECT id FROM rooms WHERE admin_id = $1", userID)
+	if err != nil {
+		return err
+	}
+	var id int32
+	id = -1
+	for rows.Next() {
+		rows.Scan(&id)
+		if id != -1 {
+			return errors.New("You are admin of this room")
+		}
+	}
+
+	row := db.QueryRow("INSERT INTO roles (room_id, user_id) VALUES ($1, $2) RETURNING id",
+		sub.RoomID, userID)
+
+	err = row.Scan(&id)
+	return err
 }
