@@ -1,29 +1,29 @@
-const MessageParser = require('./message_parser');
-const TextMessageHandler = require('./text_message_handler');
-const AudioMessageHandler = require('./audio_message_handler');
-const UserCommandHandler = require('./UserCommandHandler');
-let apiai = require('apiai');
-let dialogflow = apiai(process.env.DIALOGFLOW_CLIENT_ID);
 const VK = require('vk-node-sdk');
-const Group = new VK.Group(process.env.VKTOKEN);
+const cluster = require('cluster');
+const TaskDistributor = require('./tasks_distributor');
+let Group = new VK.Group(process.env.VKTOKEN, {
+    webhook: {
+        url: process.env.URL,
+        port: process.env.PORT
+    }
+});
+
+cluster.setupMaster({exec: 'worker.js'});
+for( let i = 0; i< process.env.WORKER ; i++){
+    cluster.fork();
+}
+
+let td = new TaskDistributor(cluster.workers);
+
+function messageHandler(message) {
+    Group.sendMessage(message);
+}
+td.onMessage(messageHandler);
 
 Group.onMessage((message) => {
     message.setTyping();
-    let m = MessageParser.parseMessage(message);
-    let handler;
-    switch (m.type) {
-        case 'text' : {
-            handler = new TextMessageHandler(m,dialogflow);
-            break;
-        }
-        case 'audio' : {
-            handler = new AudioMessageHandler(m,dialogflow);
-            break;
-        }
-    }
-    handler.execute('1234',async function (response) {
-        UserCommandHandler.calculate(response,m.messageObject);
-    }, async function (error) {
-        m.messageObject.addText('у меня ошибки какие-то: '+ JSON.stringify(error)).send()
-    })
+    td.execute({
+        message: Object.assign({}, message),
+    });
 });
+
