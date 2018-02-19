@@ -77,6 +77,7 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 	var rooms []RoomInfo
 	switch role {
 	case "reader":
+		rooms, err = db.getReaderRooms(userID, botType)
 	case "moderator":
 	case "admin":
 		rooms, err = db.getAdminRooms(userID, botType)

@@ -65,7 +65,7 @@ func createTables(db *sql.DB) error {
 		id SERIAL NOT NULL PRIMARY KEY,
 		room_id INT NOT NULL REFERENCES rooms (id),
 		user_id INT NOT NULL REFERENCES users (id),
-		user_role role NOT NULL DEFAULT reader
+		user_role role NOT NULL DEFAULT 'reader'
 	)`); err != nil {
 		return err
 	}
@@ -150,9 +150,43 @@ func (db *Database) subscribe(sub *Subscribe) error {
 		}
 	}
 
+	// Проверка не подписан ли уже на эту комнату
+	rows, err = db.Query("SELECT id FROM roles WHERE room_id = $1 AND user_id = $2",
+		sub.RoomID, userID)
+	if err != nil {
+		return err
+	}
+	id = -1
+	for rows.Next() {
+		rows.Scan(&id)
+		if id != -1 {
+			return errors.New("You already subscribed on this room")
+		}
+	}
+
 	row := db.QueryRow("INSERT INTO roles (room_id, user_id) VALUES ($1, $2) RETURNING id",
 		sub.RoomID, userID)
 
 	err = row.Scan(&id)
 	return err
+}
+
+func (db *Database) getReaderRooms(readerID int, botType string) ([]RoomInfo, error) {
+	result := []RoomInfo{}
+
+	rows, err := db.Query("SELECT rooms.id, name FROM "+
+		"(rooms JOIN roles ON rooms.id = roles.room_id) "+
+		"WHERE user_id = (SELECT id FROM users WHERE bot_id = $1 AND bot_type = $2)", readerID, botType)
+	if err != nil {
+		return nil, err
+	}
+
+	currInfo := RoomInfo{}
+	for rows.Next() {
+		rows.Scan(&currInfo.ID, &currInfo.Name)
+
+		result = append(result, currInfo)
+	}
+
+	return result, nil
 }
