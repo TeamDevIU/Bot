@@ -2,14 +2,20 @@ package main
 
 // CreateRoom для парсинга запроса на создание комнаты
 type CreateRoom struct {
-	RoomName string   `json:"roomName"`
-	UserInfo UserInfo `json:"ownerInfo"`
+	RoomName string   `json:"room_name"`
+	UserInfo UserInfo `json:"owner_info"`
 }
 
 // Subscribe для парсинга запроса на подписывание
 type Subscribe struct {
-	RoomID   int      `json:"roomID"`
-	UserInfo UserInfo `json:"userInfo"`
+	RoomID   int      `json:"room_id"`
+	UserInfo UserInfo `json:"user_info"`
+}
+
+type SendMessage struct {
+	RoomID     int      `json:"room_id"`
+	Message    string   `json:"message"`
+	SenderInfo UserInfo `json:"sender_info"`
 }
 
 type ErrorResponse struct {

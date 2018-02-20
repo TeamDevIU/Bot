@@ -124,6 +124,38 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// Отправка сообщений
+func handeSendMessage(w http.ResponseWriter, r *http.Request) {
+	body, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+
+	sendMessage := new(SendMessage)
+	err := json.Unmarshal(body, sendMessage)
+	if err != nil {
+		resp := &ErrorResponse{
+			Err: "Some troubles with request body",
+		}
+		respBody, _ := json.Marshal(resp)
+		w.Write(respBody)
+		return
+	}
+
+	if db.checkRights(sendMessage.RoomID, sendMessage.SenderInfo.ID, sendMessage.SenderInfo.BotType) {
+		resp := &ErrorResponse{
+			Err: "none",
+		}
+		respBody, _ := json.Marshal(resp)
+		w.Write(respBody)
+		// Отправка сообщений
+	} else {
+		resp := &ErrorResponse{
+			Err: "You have no rights for sending message to this room",
+		}
+		respBody, _ := json.Marshal(resp)
+		w.Write(respBody)
+	}
+}
+
 func main() {
 	var err error
 
@@ -140,6 +172,8 @@ func main() {
 	r.HandleFunc("/rooms", handleGetRooms).
 		Methods("GET")
 	r.HandleFunc("/subscribe", handeNewSubscribe).
+		Methods("POST")
+	r.HandleFunc("/sendMessage", handeSendMessage).
 		Methods("POST")
 	r.HandleFunc("/{bot-type}", initBotAdresses).
 		Methods("GET")

@@ -190,3 +190,37 @@ func (db *Database) getReaderRooms(readerID int, botType string) ([]RoomInfo, er
 
 	return result, nil
 }
+
+func (db *Database) checkRights(roomID, senderID int, botType string) bool {
+	// Является ли админом
+	rows, err := db.Query("SELECT id FROM rooms WHERE admin_id = (SELECT id FROM users WHERE bot_id = $1 AND bot_type = $2)", senderID, botType)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+
+	var id int
+	for rows.Next() {
+		rows.Scan(&id)
+		if id == roomID {
+			return true
+		}
+	}
+
+	// Является ли модератором
+	rows, err = db.Query("SELECT room_id FROM roles WHERE user_id = (SELECT id FROM users WHERE bot_id = $1 AND bot_type = $2) AND user_role = 'moderator'", senderID, botType)
+	if err != nil {
+		fmt.Println(err.Error())
+		return false
+	}
+	id = -1
+	for rows.Next() {
+		rows.Scan(&id)
+
+		fmt.Println(id)
+		if id == roomID {
+			return true
+		}
+	}
+	return false
+}
