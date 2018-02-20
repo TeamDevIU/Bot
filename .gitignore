@@ -3,7 +3,8 @@
 *.dll
 *.so
 *.dylib
-
+./TgBot/tgbot_env
+./TgBot/__pycache__
 # Test binary, build with `go test -c`
 *.test
 
