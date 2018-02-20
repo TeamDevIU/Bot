@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 
@@ -141,12 +142,35 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if db.checkRights(sendMessage.RoomID, sendMessage.SenderInfo.ID, sendMessage.SenderInfo.BotType) {
+		// Отправка сообщений
+		recipients, err := db.getMessageRecipient(sendMessage.RoomID)
+		if err != nil {
+			err = errors.New("none")
+		}
 		resp := &ErrorResponse{
-			Err: "none",
+			Err: err.Error(),
 		}
 		respBody, _ := json.Marshal(resp)
 		w.Write(respBody)
-		// Отправка сообщений
+		for _, rec := range recipients {
+			go func(recip *UserInfo) {
+				var ur string
+				if recip.BotType == "vk" {
+					ur = VKBotAdr
+				} else {
+					ur = TelegramBotAdr
+				}
+				val := url.Values{"user_id": {strconv.Itoa(recip.ID)}, "message": {sendMessage.Message}}
+				res, err := http.PostForm(ur, val)
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				defer res.Body.Close()
+				resBody, _ := ioutil.ReadAll(res.Body)
+				fmt.Println(string(resBody))
+			}(&rec)
+		}
 	} else {
 		resp := &ErrorResponse{
 			Err: "You have no rights for sending message to this room",

@@ -266,3 +266,19 @@ func (db *Database) getFullRoomInfo(roomID int) GetFullRoomInfoResponse {
 
 	return res
 }
+
+func (db *Database) getMessageRecipient(roomID int) ([]UserInfo, error) {
+	res := []UserInfo{}
+
+	rows, err := db.Query("SELECT bot_id, name, bot_type FROM (users JOIN roles ON users.id = roles.user_id) WHERE room_id = $1", roomID)
+	if err != nil {
+		return nil, err
+	}
+	var cur UserInfo
+	for rows.Next() {
+		rows.Scan(&cur.ID, &cur.Name, &cur.BotType)
+		res = append(res, cur)
+	}
+
+	return res, nil
+}
