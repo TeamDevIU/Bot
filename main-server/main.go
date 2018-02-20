@@ -156,6 +156,22 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleGetFullRoomInfo(w http.ResponseWriter, r *http.Request) {
+	roomID, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		resp := GetFullRoomInfoResponse{
+			Err: err.Error(),
+		}
+		respBody, _ := json.Marshal(resp)
+		w.Write(respBody)
+		return
+	}
+
+	resp := db.getFullRoomInfo(roomID)
+	respBody, _ := json.Marshal(resp)
+	w.Write(respBody)
+}
+
 func main() {
 	var err error
 
@@ -175,6 +191,8 @@ func main() {
 		Methods("POST")
 	r.HandleFunc("/sendMessage", handeSendMessage).
 		Methods("POST")
+	r.HandleFunc("/roomInfo", handleGetFullRoomInfo).
+		Methods("GET")
 	r.HandleFunc("/{bot-type}", initBotAdresses).
 		Methods("GET")
 

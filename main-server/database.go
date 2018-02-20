@@ -224,3 +224,45 @@ func (db *Database) checkRights(roomID, senderID int, botType string) bool {
 	}
 	return false
 }
+
+func (db *Database) getFullRoomInfo(roomID int) GetFullRoomInfoResponse {
+	rows, err := db.Query("SELECT name FROM rooms WHERE id = $1", roomID)
+	if err != nil {
+		return GetFullRoomInfoResponse{Err: err.Error()}
+	}
+	var res GetFullRoomInfoResponse
+	for rows.Next() {
+		rows.Scan(&res.RoomName)
+	}
+
+	rows, err = db.Query("SELECT bot_id, name, bot_type FROM users WHERE id = (SELECT admin_id FROM rooms WHERE id = $1)", roomID)
+	if err != nil {
+		return GetFullRoomInfoResponse{Err: err.Error()}
+	}
+	for rows.Next() {
+		rows.Scan(&res.Admin.ID, &res.Admin.Name, &res.Admin.BotType)
+	}
+
+	rows, err = db.Query("SELECT bot_id, name, bot_type FROM (users JOIN roles ON users.id = roles.user_id) WHERE user_role = 'moderator' AND room_id = $1", roomID)
+	if err != nil {
+		return GetFullRoomInfoResponse{Err: err.Error()}
+	}
+	var cur UserInfo
+	for rows.Next() {
+		rows.Scan(&cur.ID, &cur.Name, &cur.BotType)
+		res.Moderators = append(res.Moderators, cur)
+	}
+
+	rows, err = db.Query("SELECT bot_id, name, bot_type FROM (users JOIN roles ON users.id = roles.user_id) WHERE user_role = 'reader' AND room_id = $1", roomID)
+	if err != nil {
+		return GetFullRoomInfoResponse{Err: err.Error()}
+	}
+	for rows.Next() {
+		rows.Scan(&cur.ID, &cur.Name, &cur.BotType)
+		res.Readers = append(res.Readers, cur)
+	}
+
+	res.Err = "none"
+
+	return res
+}

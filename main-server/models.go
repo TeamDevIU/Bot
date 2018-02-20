@@ -29,17 +29,29 @@ type UserInfo struct {
 	BotType string `json:"type"`
 }
 
+// CreateRoomResponse хранит ответ на запрос создания комнаты
 type CreateRoomResponse struct {
 	ID  int32  `json:"room_id"`
 	Err string `json:"error"`
 }
 
+// RoomInfo хранит минимальную информацию о комнате
 type RoomInfo struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
+// GetRoomsResponse хранит ответ на запрос списка комнат
 type GetRoomsResponse struct {
 	Rooms []RoomInfo `json:"rooms"`
 	Err   string     `json:"error"`
+}
+
+// GetFullRoomInfoResponse хранит ответ на запрос полной информации комнаты
+type GetFullRoomInfoResponse struct {
+	RoomName   string     `json:"room_name"`
+	Admin      UserInfo   `json:"admin"`
+	Moderators []UserInfo `json:"moderators"`
+	Readers    []UserInfo `json:"reader"`
+	Err        string     `json:"error"`
 }
