@@ -3,6 +3,8 @@
 """Основной модуль приложения, содержащий функции-обработчики пользовательских сообщений
     Используется веб-сервер библиотеки aiohttp для запуска бота
     с использованием webhook
+
+:author: Melnikov Dmitry
 """
 
 import json
@@ -11,6 +13,7 @@ import telebot
 from aiohttp import web
 from config import API_TOKEN
 from webhookConfig import *
+from voiceMessage import voiceToText, SpeechException
 
 WEBHOOK_URL_BASE = "https://{}".format(WEBHOOK_HOST)
 WEBHOOK_URL_PATH = "/{}/".format(API_TOKEN)
@@ -44,9 +47,17 @@ def handleAudio(message):
 
     """
     fileInfo = bot.get_file(message.voice.file_id)
-    bot.send_message(message.chat.id, "я не понимаю аудиосообщения :(")
-    file = requests.get('https://api.telegram.org/file/bot{0}/{1}'.
+    response = requests.get('https://api.telegram.org/file/bot{0}/{1}'.
                         format(API_TOKEN, fileInfo.file_path))
+    try:
+        text = voiceToText(response.content)
+    except SpeechException as e:
+        print(e)
+        bot.send_message(message.chat.id, "Я не могу понять, что ты говоришь :(")
+    else:
+        bot.send_message(message.chat.id, text)
+    
+    
                         
 
 @bot.message_handler()
