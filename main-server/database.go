@@ -8,10 +8,10 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	USER     = "test_user"
-	PASSWORD = "password"
-	DB_NAME  = "test_db"
+var (
+	USER     string
+	PASSWORD string
+	DB_NAME  string
 )
 
 type Database struct {

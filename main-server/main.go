@@ -3,12 +3,12 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -199,13 +199,19 @@ func handleGetFullRoomInfo(w http.ResponseWriter, r *http.Request) {
 func main() {
 	var err error
 
+	p := flag.Int("port", 8080, "setting port for serve")
+	port := strconv.Itoa(*p)
+
+	USER = *flag.String("db-user", "test_user", "setting database username")
+	PASSWORD = *flag.String("db-pass", "password", "setting database password")
+	DB_NAME = *flag.String("db-name", "test_db", "setting database name")
+	flag.Parse()
+
 	if db, err = SetUpDatabase(); err != nil {
 		panic(err)
 	}
 
 	r := mux.NewRouter()
-
-	port := os.Getenv("APPPORT")
 
 	r.HandleFunc("/createRoom", handleCreateRoom).
 		Methods("POST")
