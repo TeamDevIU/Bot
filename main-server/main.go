@@ -45,7 +45,27 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 	createRoom := new(CreateRoom)
 	err := json.Unmarshal(body, createRoom)
 	if err != nil {
-		fmt.Println(err)
+		resp := &CreateRoomResponse{
+			ID:  -1,
+			Err: err.Error(),
+		}
+		respBody, _ := json.Marshal(resp)
+
+		w.WriteHeader(400)
+		w.Write(respBody)
+		return
+	}
+
+	if !checkStruct(createRoom) {
+		resp := &CreateRoomResponse{
+			ID:  -1,
+			Err: "Bad request body, check api docs",
+		}
+		respBody, _ := json.Marshal(resp)
+
+		w.WriteHeader(400)
+		w.Write(respBody)
+		return
 	}
 
 	// Получили инфу о новой комнате и "авторе комнаты"
@@ -105,9 +125,21 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 	err := json.Unmarshal(body, subscribe)
 	if err != nil {
 		resp := &ErrorResponse{
-			Err: "Some troubles with request body",
+			Err: "Bad request body, check api docs",
 		}
 		respBody, _ := json.Marshal(resp)
+		w.WriteHeader(400)
+		w.Write(respBody)
+		return
+	}
+
+	if !checkStruct(subscribe) {
+		resp := &ErrorResponse{
+			Err: "Bad request body, check api docs",
+		}
+		respBody, _ := json.Marshal(resp)
+
+		w.WriteHeader(400)
 		w.Write(respBody)
 		return
 	}
@@ -134,9 +166,20 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 	err := json.Unmarshal(body, sendMessage)
 	if err != nil {
 		resp := &ErrorResponse{
-			Err: "Some troubles with request body",
+			Err: "Bad request body, check api docs",
 		}
 		respBody, _ := json.Marshal(resp)
+		w.Write(respBody)
+		return
+	}
+
+	if !checkStruct(sendMessage) {
+		resp := &ErrorResponse{
+			Err: "Bad request body, check api docs",
+		}
+		respBody, _ := json.Marshal(resp)
+
+		w.WriteHeader(400)
 		w.Write(respBody)
 		return
 	}
@@ -222,8 +265,6 @@ func main() {
 	r.HandleFunc("/sendMessage", handeSendMessage).
 		Methods("POST")
 	r.HandleFunc("/roomInfo", handleGetFullRoomInfo).
-		Methods("GET")
-	r.HandleFunc("/{bot-type}", initBotAdresses).
 		Methods("GET")
 
 	fmt.Println("starting server at :" + port)
