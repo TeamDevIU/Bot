@@ -12,6 +12,6 @@ module.exports = class RoomsListCommand extends BaseCommand{
             uri: uri,
             method: method,
             json: true
-        })
+        });
     }
 };

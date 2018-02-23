@@ -15,12 +15,12 @@ module.exports = class BaseCommand {
                 this.uri += `${key}=${options.querys[key]}`;
                 if(idx !== keys.length-1)
                     this.uri += '&';
-            })
+            });
         }
         this.body = options.body;
     }
 
     execute(){
-        throw 'command not execute'
+        throw 'command not execute';
     }
 };

@@ -14,6 +14,6 @@ module.exports = class RoominfoCommand extends BaseCommand{
             method: method,
             body: body,
             json: true
-        })
+        });
     }
 };

@@ -21,7 +21,7 @@ module.exports = class VkBot extends VK.Group{
         if(handlers !== undefined){
             handlers.forEach((handler) => {
                 app[handler.method](handler.path,handler.callback);
-            })
+            });
         }
 
         app.all('/', (request,response) =>{
@@ -39,10 +39,10 @@ module.exports = class VkBot extends VK.Group{
                 }
                 if (webhook.config && webhook.config.secret_key && !(json.object && json.secret && json.secret == webhook.config.secret_key)) {
                     response.status(200).send('Secret key is not valid');
-                    return
+                    return;
                 }
                 if (json.type === 'message_new' || json.type === 'message_reply') {
-                    self.pushMessage(json.object)
+                    self.pushMessage(json.object);
                 }
                 let stack = self.EventCallbackRegistry;
                 if (stack.length > 0) {
@@ -51,10 +51,10 @@ module.exports = class VkBot extends VK.Group{
                         if (index >= stack.length) return;
                         stack[index](json, () => {
                             index++;
-                            notify()
-                        })
+                            notify();
+                        });
                     };
-                    notify()
+                    notify();
                 }
                 response.status(200).send('ok');
             } catch(e) {
@@ -64,17 +64,17 @@ module.exports = class VkBot extends VK.Group{
 
         app.listen((webhook.port || 80), (err) => {
             if (err) {
-                return console.log('something bad happened', err)
+                return console.log('something bad happened', err);
             }
-            let executeCode = 'var group_id = API.groups.getById()[0].id;var callbackURL = Args.server_url;var server_id = Args.server_id;var json = {};if (server_id == 0) {server_id = API.groups.addCallbackServer({url: callbackURL, title: "vk-node-sdk", group_id: group_id});json = API.groups.getCallbackServers({group_id:group_id,server_ids:server_id}).items[0];} else {json = API.groups.getCallbackServers({group_id:group_id,server_ids:server_id}).items[0];}if (json == null) {server_id = API.groups.addCallbackServer({url: callbackURL, title: "vk-node-sdk", group_id: group_id});json = API.groups.getCallbackServers({group_id:group_id,server_ids:server_id}).items[0];}json.code = API.groups.getCallbackConfirmationCode({group_id:group_id}).code;return json;'
+            let executeCode = 'var group_id = API.groups.getById()[0].id;var callbackURL = Args.server_url;var server_id = Args.server_id;var json = {};if (server_id == 0) {server_id = API.groups.addCallbackServer({url: callbackURL, title: "vk-node-sdk", group_id: group_id});json = API.groups.getCallbackServers({group_id:group_id,server_ids:server_id}).items[0];} else {json = API.groups.getCallbackServers({group_id:group_id,server_ids:server_id}).items[0];}if (json == null) {server_id = API.groups.addCallbackServer({url: callbackURL, title: "vk-node-sdk", group_id: group_id});json = API.groups.getCallbackServers({group_id:group_id,server_ids:server_id}).items[0];}json.code = API.groups.getCallbackConfirmationCode({group_id:group_id}).code;return json;';
             self.api('execute', {code: executeCode, server_url: webhook.url, server_id: (webhook.config ? webhook.config.id : 0)}, (data, error) => {
                 if (data) {
-                    Utils.jsonToFile(confingFile, data)
+                    Utils.jsonToFile(confingFile, data);
                 } else {
-                    throw new Error(JSON.stringify(error))
+                    throw new Error(JSON.stringify(error));
                 }
             });
-            console.log(`server is listening on ${webhook.port}`)
+            console.log(`server is listening on ${webhook.port}`);
         });
     }
 

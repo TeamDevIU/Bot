@@ -14,6 +14,6 @@ module.exports = class SubscribeCommand extends BaseCommand{
             method: method,
             body: body,
             json: true
-        })
+        });
     }
 };

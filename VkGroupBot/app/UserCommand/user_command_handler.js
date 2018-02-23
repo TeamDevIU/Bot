@@ -16,12 +16,12 @@ module.exports = class UserCommandHandler {
                     process.send({
                         user_id: user_id,
                         message: `${text} (${response.room_id})`
-                    })
+                    });
                 }).catch(err => {
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
-                    })
+                    });
                 });
                 break;
             }
@@ -48,12 +48,12 @@ module.exports = class UserCommandHandler {
                     process.send({
                         user_id: user_id,
                         message: `${text}`
-                    })
+                    });
                 }).catch(err => {
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
-                    })
+                    });
                 });
                 break;
             }
@@ -71,12 +71,12 @@ module.exports = class UserCommandHandler {
                     process.send({
                         user_id: user_id,
                         message: `${text}`
-                    })
+                    });
                 }).catch(err => {
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
-                    })
+                    });
                 });
                 break;
             }
@@ -123,7 +123,7 @@ module.exports = class UserCommandHandler {
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
-                    })
+                    });
                 });
                 break;
             }
@@ -138,7 +138,7 @@ module.exports = class UserCommandHandler {
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
-                    })
+                    });
                 });
                 break;
             }
@@ -153,7 +153,7 @@ module.exports = class UserCommandHandler {
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
-                    })
+                    });
                 });
                 break;
             }
@@ -176,7 +176,7 @@ module.exports = class UserCommandHandler {
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
-                    })
+                    });
                 });
                 break;
             }
