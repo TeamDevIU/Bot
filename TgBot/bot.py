@@ -8,17 +8,21 @@
 """
 
 import json
-import requests
 import telebot
 from aiohttp import web
-from config import API_TOKEN
-from webhookConfig import *
-from voiceMessage import voiceToText, SpeechException
+from config import API_TOKEN, DIALOG_FLOW_TOKEN, SERVER_HOST
+from handlers.text_handler import TextHandler
+from handlers.voice_handler import VoiceHandler
+from dialog_flow import DialogFlow
+from main_server import MainServer
+from webhook_config import *
 
 WEBHOOK_URL_BASE = "https://{}".format(WEBHOOK_HOST)
 WEBHOOK_URL_PATH = "/{}/".format(API_TOKEN)
 
 bot = telebot.TeleBot(API_TOKEN)
+df = DialogFlow(DIALOG_FLOW_TOKEN)
+server = MainServer(SERVER_HOST)
 
 app = web.Application()
 
@@ -39,36 +43,25 @@ async def handle(request):
 
 app.router.add_post('/{token}/', handle)
 
-@bot.message_handler(content_types=['voice'])
-def handleAudio(message):
-    """ Обработчик голосовых сообщений пользователя
-    
-    :param message: сообщение пользователя
 
-    """
-    fileInfo = bot.get_file(message.voice.file_id)
-    response = requests.get('https://api.telegram.org/file/bot{0}/{1}'.
-                        format(API_TOKEN, fileInfo.file_path))
-    try:
-        text = voiceToText(response.content)
-    except SpeechException as e:
-        print(e)
-        bot.send_message(message.chat.id, "Я не могу понять, что ты говоришь :(")
-    else:
-        bot.send_message(message.chat.id, text)
-    
-    
-                        
-
-@bot.message_handler()
-def echoMessage(message):
+@bot.message_handler(content_types=['voice', 'text'])
+def answer(message):
     """ Обработчик всех сообщений пользователя
     
     :param message: сообщение пользователя
 
     """
-    bot.reply_to(message, message.text)
 
+    try:
+        ct = message.content_type
+        if ct == 'voice':
+            VoiceHandler(bot, message, server, df)
+        else:
+            TextHandler(bot, message, server, df)
+    except telebot.apihelper.ApiException as e:
+        print(e)
+        bot.send_message(message.chat.id, "Повтори, пожалуйста.")
+    
 
 bot.remove_webhook()
 bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH)
