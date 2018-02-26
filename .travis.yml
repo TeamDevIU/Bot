@@ -1,5 +1,8 @@
 language: generic
 before_script:
+  # установка зависимостей
 script:
+  # непосредственный запуск тестов
 after_success:
+  # после удачного выполнения тестов
   - ./.travis/push_to_master.sh
