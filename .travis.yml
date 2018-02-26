@@ -7,8 +7,6 @@ script:
 after_success:
   # после удачного выполнения тестов
   - tree
-  - "chmod a+x ./.travis/push_to_master.sh"
-  - "BRANCHES_TO_MERGE_REGEX='development' BRANCH_TO_MERGE_INTO=master GITHUB_REPO=TeamDevIU/Bot ./.travis/push_to_master.sh"
 env:
   global:
      - secure: UVA3mV/bhvN7zdADeNj2iMX1Zq8FUIhkcf13UtdqzSJVgG8PokeQuS8C2Nw09wcBwaS3AGxKWEYv5cab3kFuskhjpIqBpJzrYNYVlAlBOx9WUSmk3WsqSV2a+5VQP/kaVTNG2iOX+BlN+f4tKF9w3vyxCqAmlJMc81uJCytaCHQJ83Y2b7bsP2MSvcweWtT3unPGG7Lir29BxT0RhmbP6HmWlrehOiSRCBupouaNfE6OjKXyvdurlWJmBU6twdObXEKaBahgLgZ0gS/fdJv+XEbrLfRTO68OcarArxOFB0UyUAOe7MSeVurw3NqfQOmKvVFBAIkAd1iMCLwbMViJYzfvQv6W8l1hv1xhqmPkUQ6/S/Q1lBFNfYx6rCXcor8Lnd9vQkSR9DindUe0v9cM5aouGrXe4sZH0HfbCDthTT1t9KnbLRe+9j2uRjnorZA0IExeAmlJEIwysw3bJ09PeMC8caI41u/LB1fxFRxTvQ1KMC84ZcjPxaEfleLCXdmFFCLVxIEG9ISNJsEDYKvSD35JVXBsrKmT6AqFDV/R8xxNDGXVSWaA6/KNNmAJYUZuXKxdJDTeqMr2QuUoYuUEbOyYCP/uVMatcd9QF/ja04KpUZPitOLYf0jrk+uTom335gnzDH6nhXpOl9g1SEpIlaNp/d3vBNYUK8RIdXROfRQ=
