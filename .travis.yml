@@ -7,7 +7,7 @@ script:
 after_success:
   # после удачного выполнения тестов
   - tree
-    - "chmod a+x /.travis/push_to_master.sh"
+  - "chmod a+x /.travis/push_to_master.sh"
   - "BRANCHES_TO_MERGE_REGEX='development' BRANCH_TO_MERGE_INTO=master GITHUB_REPO=TeamDevIU/Bot /.travis/push_to_master.sh"
 env:
   global:
