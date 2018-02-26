@@ -1,9 +1,10 @@
 language: generic
 before_script:
   # установка зависимостей
+  - sudo apt-get install tree
 script:
   # непосредственный запуск тестов
 after_success:
   # после удачного выполнения тестов
-  - cd .travis
-  - ./push_to_master.sh
+  - tree
+  - ./.travis/push_to_master.sh
