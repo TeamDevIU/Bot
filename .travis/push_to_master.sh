@@ -7,6 +7,7 @@ setup_git() {
 
 commit_website_files() {
   git checkout -b master
+  tree
   git add *
   git status
   git commit --message "Travis build: $TRAVIS_BUILD_NUMBER"
