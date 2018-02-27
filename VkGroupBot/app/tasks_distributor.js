@@ -10,7 +10,6 @@ module.exports = class TasksDistributor{
      * @param {Object} [workers]
      */
     constructor(workers) {
-        console.log(workers);
         if (workers === undefined)
             throw "workers not init";
         this.workers = workers;
