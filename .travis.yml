@@ -2,8 +2,14 @@ language: generic
 before_script:
   # установка зависимостей
   - sudo apt-get install tree
+  - sudo apt-get install nodejs
+  - sudo apt-get install npm
 script:
   # непосредственный запуск тестов
+  - cd VkBot
+  - npm install
+  - npm test
+  - grunt jshint
 after_success:
   # после удачного выполнения тестов
   - tree
