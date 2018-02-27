@@ -10,12 +10,12 @@
 import json
 import telebot
 from aiohttp import web
-from config import API_TOKEN, DIALOG_FLOW_TOKEN, SERVER_HOST
+from config import *
 from handlers.text_handler import TextHandler
 from handlers.voice_handler import VoiceHandler
 from dialog_flow import DialogFlow
 from main_server import MainServer
-from webhook_config import *
+
 
 WEBHOOK_URL_BASE = "https://{}".format(WEBHOOK_HOST)
 WEBHOOK_URL_PATH = "/{}/".format(API_TOKEN)
