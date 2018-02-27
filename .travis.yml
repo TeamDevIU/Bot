@@ -4,6 +4,9 @@ python:
 before_script:
   # установка зависимостей
   - sudo apt-get install tree
+  - cd TgBot
+  - python3.6 -m pip install -r requirements.txt 
+  - cd ..
 script:
   # непосредственный запуск тестов
   - if [ $TRAVIS_BRANCH == "development" ]; 
