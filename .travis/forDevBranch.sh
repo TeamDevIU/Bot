@@ -6,5 +6,5 @@ npm test;
 grunt jshint;
 cd ..;
 cd TgBot;
-python -m unittest tests/*.py;
+python3.6 -m unittest tests/*.py;
 cd ..;
