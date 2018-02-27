@@ -1,0 +1,20 @@
+language: generic
+before_script:
+  # установка зависимостей
+  - sudo apt-get install tree
+  - sudo apt-get install nodejs
+  - sudo apt-get install npm
+script:
+  # непосредственный запуск тестов
+  # Тестирование VkBot
+  - cd VkGroupBot
+  - npm install
+  - npm test
+  - grunt jshint
+  - cd ..
+after_success:
+  # после удачного выполнения тестов
+  - tree
+env:
+  global:
+     - secure: UVA3mV/bhvN7zdADeNj2iMX1Zq8FUIhkcf13UtdqzSJVgG8PokeQuS8C2Nw09wcBwaS3AGxKWEYv5cab3kFuskhjpIqBpJzrYNYVlAlBOx9WUSmk3WsqSV2a+5VQP/kaVTNG2iOX+BlN+f4tKF9w3vyxCqAmlJMc81uJCytaCHQJ83Y2b7bsP2MSvcweWtT3unPGG7Lir29BxT0RhmbP6HmWlrehOiSRCBupouaNfE6OjKXyvdurlWJmBU6twdObXEKaBahgLgZ0gS/fdJv+XEbrLfRTO68OcarArxOFB0UyUAOe7MSeVurw3NqfQOmKvVFBAIkAd1iMCLwbMViJYzfvQv6W8l1hv1xhqmPkUQ6/S/Q1lBFNfYx6rCXcor8Lnd9vQkSR9DindUe0v9cM5aouGrXe4sZH0HfbCDthTT1t9KnbLRe+9j2uRjnorZA0IExeAmlJEIwysw3bJ09PeMC8caI41u/LB1fxFRxTvQ1KMC84ZcjPxaEfleLCXdmFFCLVxIEG9ISNJsEDYKvSD35JVXBsrKmT6AqFDV/R8xxNDGXVSWaA6/KNNmAJYUZuXKxdJDTeqMr2QuUoYuUEbOyYCP/uVMatcd9QF/ja04KpUZPitOLYf0jrk+uTom335gnzDH6nhXpOl9g1SEpIlaNp/d3vBNYUK8RIdXROfRQ=
