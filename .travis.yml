@@ -6,8 +6,7 @@ before_script:
   - sudo apt-get install npm
 script:
   # непосредственный запуск тестов
-  - test $TRAVIS_BRANCH = "development" && ./.travis/forDevBranch.sh
-  - test $TRAVIS_BRANCH = "master" && ./.travis/forMasterBranch.sh
+  - if [[ $TRAVIS_BRANCH = "development" ]] ./.travis/forDevBranch.sh else if [[[$TRAVIS_BRANCH = "master"]]  ./.travis/forMasterBranch.sh fi fi
 after_success:
   # после удачного выполнения тестов
   - tree
