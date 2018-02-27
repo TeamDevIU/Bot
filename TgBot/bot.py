@@ -26,22 +26,62 @@ server = MainServer(SERVER_HOST)
 
 app = web.Application()
 
-async def handle(request):
+async def handleTg(request):
     """ Функция-обработчик запросов, поступающих на веб-сервер
+        с сервера Telegram
 
     :param request: объект-запрос
 
     """
 
     if request.match_info.get('token') == bot.token:
-        request_body_dict = await request.json()
-        update = telebot.types.Update.de_json(request_body_dict)
+        requestBodyDict = await request.json()
+        update = telebot.types.Update.de_json(requestBodyDict)
         bot.process_new_updates([update])
         return web.Response()
     else:
         return web.Response(status=403)
 
-app.router.add_post('/{token}/', handle)
+
+async def handleMainServer(request):
+    """ Функция-обработчик запросов, поступающих на веб-сервер
+        с главного сервера приложения
+
+    :param request: объект-запрос
+
+    """
+    try:
+        requestBodyDict = await request.json()
+    except BaseException as e:
+        print(e)
+        return web.Response(status=500, 
+            text="Internal server error")
+    
+
+    if requestBodyDict:
+        print(requestBodyDict)
+        try:
+            user_id = int(requestBodyDict['user_id'])
+            message = str(requestBodyDict['message'])
+        except (KeyError, ValueError) as e:
+            return web.Response(status=400, 
+                text="Bad request. Check request body")
+        else:
+            try:
+                bot.send_message(user_id, message)
+            except telebot.apihelper.ApiException as e:
+                print(e)
+                return web.Response(status=400, 
+                    text="Bad request. Chat not found")
+            else:
+                return web.Response()
+    else:
+        return web.Response(status=400, 
+                text="Bad request. Check request body")
+
+
+app.router.add_post('/{token}/', handleTg)
+app.router.add_post('/', handleMainServer)
 
 
 @bot.message_handler(content_types=['voice', 'text'])

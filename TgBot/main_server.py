@@ -97,6 +97,7 @@ class MainServer():
             print(res["error"])
             return True, None, "Не удалось создать комнату :("
 
+        
         return False, True, " c id: " + str(res["room_id"])
 
     def getRoomsList(self, message, role):
@@ -152,7 +153,7 @@ class MainServer():
         
         url = self.host + "/subscribe"
         data = {
-            "room_id": roomId,
+            "room_id": int(roomId),
             "user_info": {
                 "id": message.from_user.id,
                 "name": message.from_user.username,
@@ -169,7 +170,8 @@ class MainServer():
         res = response.json()
         if res["error"] != "none":
             print(res["error"])
-            return True, None, "Не удалось добавить в группу :("
+            return True, None, "Не удалось добавить в группу :(\n" + \
+                    "Возможно, ты ее админ."
 
         return False, False, ""
 
@@ -190,7 +192,7 @@ class MainServer():
 
         url = self.host + "/sendMessage"
         data = {
-            "room_id": roomId,
+            "room_id": int(roomId),
             "message": text,
             "sender_info": {
                 "id": message.from_user.id,
@@ -219,12 +221,12 @@ class MainServer():
         :param roomId: id группы
 
         :return: результат запроса(True/False), 
-        признак дополнения сообщения, сообщение
+        признак дополнения сообщения, сооsщение
         """
 
         url = self.host + "/roomInfo"
         parameters = {
-                "id": roomId,
+                "id": int(roomId),
             }
 
         try:
