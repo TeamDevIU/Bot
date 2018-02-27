@@ -7,7 +7,7 @@ before_script:
 script:
   # непосредственный запуск тестов
   # Тестирование VkBot
-  - cd VkBot
+  - cd VkGroupBot
   - npm install
   - npm test
   - grunt jshint
