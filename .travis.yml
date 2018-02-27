@@ -10,7 +10,7 @@ before_script:
   - wget https://bootstrap.pypa.io/get-pip.py
   - sudo python3.6 get-pip.py
   - cd TgBot
-  - pip3.6 install -r requirements.txt 
+  - sudo pip3.6 install -r requirements.txt 
   - cd ..
 script:
   # непосредственный запуск тестов
