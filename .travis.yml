@@ -1,4 +1,5 @@
 language: generic
+dist: xenial
 before_script:
   # установка зависимостей
   - sudo apt-get install tree
