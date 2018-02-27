@@ -51,7 +51,7 @@ module.exports = class CommandFabric {
             method: 'POST',
             path: '/subscribe',
             body: {
-                room_id: room_id,
+                room_id: Number.parseInt(room_id),
                 user_info: {
                     id: user_id,
                     name: user_name,
@@ -69,7 +69,7 @@ module.exports = class CommandFabric {
             method: 'POST',
             path: '/sendMessage',
             body: {
-                room_id: room_id,
+                room_id: Number.parseInt(room_id),
                 message: message,
                 sender_info: {
                     id: user_id,
@@ -88,7 +88,7 @@ module.exports = class CommandFabric {
             method: 'GET',
             path: '/roomInfo',
             querys: {
-                id: room_id
+                id: Number.parseInt(room_id)
             }
         });
         return command;

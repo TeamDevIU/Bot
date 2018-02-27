@@ -6,8 +6,7 @@ module.exports = class UserCommandHandler {
         let intent_name = req.result.metadata.intentName;
         let text = req.result.fulfillment.speech;
         let commandsFabric = new CommandsFabric({
-            host: 'localhost',
-            port: '8000'
+            host: '18a8d12e.ngrok.io'
         });
         switch (intent_name) {
             case "CreateRoom": {
