@@ -8,7 +8,7 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install python3.6 libpython3.6
   - cd TgBot
-  - pip3 install -r requirements.txt 
+  - python3.6 -m pip3 install -r requirements.txt 
   - cd ..
 script:
   # непосредственный запуск тестов
