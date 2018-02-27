@@ -6,12 +6,8 @@ before_script:
   - sudo apt-get install npm
 script:
   # непосредственный запуск тестов
-  # Тестирование VkBot
-  - cd VkGroupBot
-  - npm install
-  - npm test
-  - grunt jshint
-  - cd ..
+  - test $TRAVIS_BRANCH = "develop" && ./.travis/forDevBranch.sh
+  - test $TRAVIS_BRANCH = "develop" && ./.travis/forMasterBranch.sh
 after_success:
   # после удачного выполнения тестов
   - tree
