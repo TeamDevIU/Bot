@@ -1,11 +1,12 @@
 const VkBot = require('./Bot/bot');
 const cluster = require('cluster');
 const TaskDistributor = require('./tasks_distributor');
+const CONFIG = require(process.env.CONFIG);
 
-let Bot = new VkBot(process.env.VKTOKEN, {
+let Bot = new VkBot(CONFIG.VKTOKEN, {
     webhook: {
-        url: process.env.URL,
-        port: process.env.PORT_BOT
+        url: CONFIG.URL,
+        port: CONFIG.PORT_BOT
     }
 },[{
     method: 'post',

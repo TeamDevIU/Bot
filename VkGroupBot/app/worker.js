@@ -2,7 +2,8 @@ const UserCommandHandler = require('./UserCommand/user_command_handler');
 const HandlerFabric = require('./Handler/handler_fabric');
 const VK = require('vk-node-sdk');
 const apiai = require('apiai');
-let dialogflow = apiai(process.env.DIALOGFLOW_CLIENT_ID);
+const CONFIG = require(process.env.CONFIG);
+let dialogflow = apiai(CONFIG.DIALOGFLOW_CLIENT_ID);
 /**
  * Функция обработки команды от пользователя
  * с последующей отправкой отвека  чат вк.
