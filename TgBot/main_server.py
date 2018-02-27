@@ -241,21 +241,21 @@ class MainServer():
             return True, None, "Не удалось получить информацию о группе :("
 
         text = "\nНазвание комнаты: " + res['room_name']
-        text += "\n\nАдминистратор: " + res['admin']['name'] + " (" + \
+        text += "\nАдминистратор: " + res['admin']['name'] + " (" + \
             res['admin']['type'] + ")"
 
-        """moderators = res['moderators']
-        text += "\n\nМодераторы: " + str(len(moderators))
-        if len(moderators) > 0:
+        moderators = res['moderators']
+        if moderators:
+            text += "\n\nМодераторы: " + str(len(moderators))
             for moderator in moderators:
                 text += "\n" + moderator['name'] + " (" + \
-                    moderator['type'] + ")"""
+                    moderator['type'] + ")"
 
-        """readers = res['readers']
-        text += "\n\nЧитатели: " + str(len(moderators))
-        if len(readers) > 0:
+        readers = res['reader']
+        if readers:
+            text += "\n\nЧитатели: " + str(len(readers))
             for reader in readers:
                 text += "\n" + reader['name'] + " (" + \
-                    reader['type'] + ")" """
+                    reader['type'] + ")"
         
         return False, True, text
