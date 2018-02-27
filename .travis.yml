@@ -6,7 +6,7 @@ before_script:
   - sudo apt-get install npm
   - sudo add-apt-repository -y ppa:jonathonf/python-3.6
   - sudo apt-get update
-  - sudo apt-get install python3.6 libpython3.6
+  - sudo apt-get install python3.6 libpython3.6 python3-pip
   - cd TgBot
   - python3.6 -m pip install -r requirements.txt 
   - cd ..
