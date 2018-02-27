@@ -8,8 +8,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -196,17 +196,20 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 		}
 		respBody, _ := json.Marshal(resp)
 		w.Write(respBody)
-		for _, rec := range recipients {
-			go func(recip *UserInfo) {
+		for i := range recipients {
+			go func(j int) {
+				recip := recipients[j]
 				var ur string
 				if recip.BotType == "vk" {
 					ur = VKBotAdr
 				} else {
 					ur = TelegramBotAdr
 				}
-				val := url.Values{"user_id": {strconv.Itoa(recip.ID)}, "message": {sendMessage.Message}}
-				fmt.Println(val)
-				res, err := http.PostForm(ur, val)
+				req := `{
+	"user_id":` + strconv.Itoa(recip.ID) + `,
+	"message": "Сообщение от группы ` + strconv.Itoa(sendMessage.RoomID) + `: ` + sendMessage.Message + `"
+}`
+				res, err := http.Post(ur, "application/json", strings.NewReader(req))
 				if err != nil {
 					fmt.Println(err)
 					return
@@ -214,7 +217,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 				defer res.Body.Close()
 				resBody, _ := ioutil.ReadAll(res.Body)
 				fmt.Println(string(resBody))
-			}(&rec)
+			}(i)
 		}
 	} else {
 		resp := &ErrorResponse{
@@ -241,23 +244,11 @@ func handleGetFullRoomInfo(w http.ResponseWriter, r *http.Request) {
 	w.Write(respBody)
 }
 
-func main() {
+func ServeMainServer() (http.Handler, error) {
 	var err error
-
-	p := flag.Int("port", 8080, "setting port for serve")
-	port := strconv.Itoa(*p)
-
-	USER = *flag.String("db-user", "test_user", "setting database username")
-	PASSWORD = *flag.String("db-pass", "password", "setting database password")
-	DB_NAME = *flag.String("db-name", "test_db", "setting database name")
-	TelegramBotAdr = *flag.String("tg-bot", "127.0.0.1:8081", "setting telegram bot adress")
-	VKBotAdr = *flag.String("vk-bot", "127.0.0.1:8082", "setting vk bot adress")
-	flag.Parse()
-
 	if db, err = SetUpDatabase(); err != nil {
-		panic(err)
+		return nil, err
 	}
-
 	r := mux.NewRouter()
 
 	r.HandleFunc("/createRoom", handleCreateRoom).
@@ -271,6 +262,24 @@ func main() {
 	r.HandleFunc("/roomInfo", handleGetFullRoomInfo).
 		Methods("GET")
 
+	return r, nil
+}
+
+func main() {
+	p := flag.Int("port", 8080, "setting port for serve")
+	port := strconv.Itoa(*p)
+
+	USER = *flag.String("db-user", "test_user", "setting database username")
+	PASSWORD = *flag.String("db-pass", "password", "setting database password")
+	DB_NAME = *flag.String("db-name", "test_db", "setting database name")
+	TelegramBotAdr = *flag.String("tg-bot", "http://0df39e31.ngrok.io", "setting telegram bot adress")
+	VKBotAdr = *flag.String("vk-bot", "http://c46d259b.ngrok.io/send_message", "setting vk bot adress")
+	flag.Parse()
+
+	r, err := ServeMainServer()
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("starting server at :" + port)
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }
