@@ -169,6 +169,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 			Err: "Bad request body, check api docs",
 		}
 		respBody, _ := json.Marshal(resp)
+		w.WriteHeader(400)
 		w.Write(respBody)
 		return
 	}
@@ -187,7 +188,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 	if db.checkRights(sendMessage.RoomID, sendMessage.SenderInfo.ID, sendMessage.SenderInfo.BotType) {
 		// Отправка сообщений
 		recipients, err := db.getMessageRecipient(sendMessage.RoomID)
-		if err != nil {
+		if err == nil {
 			err = errors.New("none")
 		}
 		resp := &ErrorResponse{
@@ -204,6 +205,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 					ur = TelegramBotAdr
 				}
 				val := url.Values{"user_id": {strconv.Itoa(recip.ID)}, "message": {sendMessage.Message}}
+				fmt.Println(val)
 				res, err := http.PostForm(ur, val)
 				if err != nil {
 					fmt.Println(err)
@@ -248,6 +250,8 @@ func main() {
 	USER = *flag.String("db-user", "test_user", "setting database username")
 	PASSWORD = *flag.String("db-pass", "password", "setting database password")
 	DB_NAME = *flag.String("db-name", "test_db", "setting database name")
+	TelegramBotAdr = *flag.String("tg-bot", "127.0.0.1:8081", "setting telegram bot adress")
+	VKBotAdr = *flag.String("vk-bot", "127.0.0.1:8082", "setting vk bot adress")
 	flag.Parse()
 
 	if db, err = SetUpDatabase(); err != nil {

@@ -141,11 +141,11 @@ func (db *Database) subscribe(sub *Subscribe) error {
 	if err != nil {
 		return err
 	}
-	var id int32
+	var id int
 	id = -1
 	for rows.Next() {
 		rows.Scan(&id)
-		if id != -1 {
+		if id == sub.RoomID {
 			return errors.New("You are admin of this room")
 		}
 	}
