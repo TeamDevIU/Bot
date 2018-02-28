@@ -21,6 +21,8 @@ jobs:
 
     - stage: test_tgbot
       language: python
+      python:
+        - "3.6"
       before_script:
           - cd TgBot
           - echo "DIALOG_FLOW_TOKEN = \"$DIALOG_FLOW_TOKEN\"" > config.py
