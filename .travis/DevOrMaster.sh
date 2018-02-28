@@ -16,4 +16,4 @@ function devOrMaster()
  fi
  echo "$result"
 }
-$(devOrMaster)
+devOrMaster
