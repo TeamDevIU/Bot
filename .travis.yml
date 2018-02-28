@@ -1,25 +1,42 @@
 language: generic
-before_script:
-  # установка зависимостей
-  - sudo apt-get install tree
-  - sudo apt-get install nodejs
-  - sudo apt-get install npm
-  - sudo add-apt-repository -y ppa:jonathonf/python-3.6
-  - sudo apt-get update
-  - sudo apt-get install python3.6 libpython3.6
-  - wget https://bootstrap.pypa.io/get-pip.py
-  - sudo python3.6 get-pip.py
-  - cd TgBot
-  - echo "DIALOG_FLOW_TOKEN = \"$DIALOG_FLOW_TOKEN\"" > config.py
-  - cat config.py
-  - sudo pip3.6 install -r requirements.txt 
-  - cd ..
-script:
-  # непосредственный запуск тестов
-  - ./.travis/DevOrMaster.sh
-after_success:
-  # после удачного выполнения тестов
-  - tree
-env:
-  global:
-     - secure: UVA3mV/bhvN7zdADeNj2iMX1Zq8FUIhkcf13UtdqzSJVgG8PokeQuS8C2Nw09wcBwaS3AGxKWEYv5cab3kFuskhjpIqBpJzrYNYVlAlBOx9WUSmk3WsqSV2a+5VQP/kaVTNG2iOX+BlN+f4tKF9w3vyxCqAmlJMc81uJCytaCHQJ83Y2b7bsP2MSvcweWtT3unPGG7Lir29BxT0RhmbP6HmWlrehOiSRCBupouaNfE6OjKXyvdurlWJmBU6twdObXEKaBahgLgZ0gS/fdJv+XEbrLfRTO68OcarArxOFB0UyUAOe7MSeVurw3NqfQOmKvVFBAIkAd1iMCLwbMViJYzfvQv6W8l1hv1xhqmPkUQ6/S/Q1lBFNfYx6rCXcor8Lnd9vQkSR9DindUe0v9cM5aouGrXe4sZH0HfbCDthTT1t9KnbLRe+9j2uRjnorZA0IExeAmlJEIwysw3bJ09PeMC8caI41u/LB1fxFRxTvQ1KMC84ZcjPxaEfleLCXdmFFCLVxIEG9ISNJsEDYKvSD35JVXBsrKmT6AqFDV/R8xxNDGXVSWaA6/KNNmAJYUZuXKxdJDTeqMr2QuUoYuUEbOyYCP/uVMatcd9QF/ja04KpUZPitOLYf0jrk+uTom335gnzDH6nhXpOl9g1SEpIlaNp/d3vBNYUK8RIdXROfRQ=
+stages:
+  - name: test_vkbot
+    if: branch = development
+  - name: test_tgbot
+    if: branch = development
+  - name: test_mainserver
+    if: branch = development
+
+jobs:
+  include:
+    - stage: test_vkbot
+      before_script:
+          - sudo apt-get install nodejs
+          - sudo apt-get install npm
+      script: 
+          - cd VkGroupBot;
+          - npm install;
+          - npm test;
+          - grunt jshint;
+          - cd ..;
+
+    - stage: test_tgbot
+      before_script:
+          - sudo add-apt-repository -y ppa:jonathonf/python-3.6
+          - sudo apt-get update
+          - sudo apt-get install python3.6 libpython3.6
+          - wget https://bootstrap.pypa.io/get-pip.py
+          - sudo python3.6 get-pip.py
+          - cd TgBot
+          - echo "DIALOG_FLOW_TOKEN = \"$DIALOG_FLOW_TOKEN\"" > config.py
+          - sudo pip3.6 install -r requirements.txt 
+          - cd ..
+      script: 
+          - cd TgBot
+          - python3.6 -m unittest tests/*.py
+          - cd ..
+
+    - stage: test_mainserver
+      before_script:
+      script: 
+
