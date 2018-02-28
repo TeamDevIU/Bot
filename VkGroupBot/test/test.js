@@ -5,7 +5,7 @@ describe("tasks_distributor", () => {
         try {
             let taskDistributor = new TaskDistributor()
         } catch (err) {
-            assert.equal(err,"workers not init");
+            assert.equal(err,"workers not init1");
         }
     })
 });
