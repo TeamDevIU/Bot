@@ -42,10 +42,11 @@ jobs:
 
     - stage: test_mainserver
       language: go
-      go:
-        - 1.9
-        - master 
       before_script:
+          - cd main-server
+          - go get github.com/gorilla/mux
+          - go get github.com/lib/pq
+          - 
       script: 
     - stage: deploy
       before_script:
