@@ -10,7 +10,9 @@ stages:
 jobs:
   include:
     - stage: test_vkbot
-      language: js
+      language: node_js
+      node_js: 
+          - "node"
       before_script:
       script: 
           - cd VkGroupBot;
@@ -21,9 +23,12 @@ jobs:
 
     - stage: test_tgbot
       language: python
-      python:
-        - "3.6"
       before_script:
+          - sudo add-apt-repository -y ppa:jonathonf/python-3.6
+          - sudo apt-get update
+          - sudo apt-get install python3.6 libpython3.6
+          - wget https://bootstrap.pypa.io/get-pip.py
+          - sudo python3.6 get-pip.py
           - cd TgBot
           - echo "DIALOG_FLOW_TOKEN = \"$DIALOG_FLOW_TOKEN\"" > config.py
           - sudo pip3.6 install -r requirements.txt 
