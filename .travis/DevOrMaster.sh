@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function DevOrMaster()
 {
  local result = 1;
