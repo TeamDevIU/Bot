@@ -5,12 +5,12 @@ function devOrMaster()
  local result
  if [[ $TRAVIS_BRANCH = "development" ]]
  then 
-     sh forDevBranch.sh
+     sh .travis/forDevBranch.sh
      result=$?
  else 
      if [[ $TRAVIS_BRANCH = "master" ]]
         then  
-            sh forMasterBranch.sh
+            sh .travis/forMasterBranch.sh
             result=$?
      fi 
  fi
