@@ -1,17 +1,21 @@
 #!/bin/bash
 
-function DevOrMaster()
+function devOrMaster()
 {
  local result
  if [ [$TRAVIS_BRANCH = "development"] ]
  then 
-     result = ./.travis/forDevBranch.sh
+     echo "dev"
+     sh .travis/forDevBranch.sh
+     result = $?
  else 
      if [ [$TRAVIS_BRANCH = "master"] ]
         then  
-            result = ./.travis/forMasterBranch.sh
+            echo "master"
+            sh .travis/forMasterBranch.sh
+            result = $?
      fi 
  fi
  echo "$result"
 }
-$(DevOrMaster)
+$(devOrMaster)

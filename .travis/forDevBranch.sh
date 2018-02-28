@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "DEV"
 cd VkGroupBot;
 npm install;
 npm test;
