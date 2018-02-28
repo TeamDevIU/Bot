@@ -11,6 +11,7 @@ before_script:
   - sudo python3.6 get-pip.py
   - cd TgBot
   - echo "DIALOG_FLOW_TOKEN = $DIALOG_FLOW_TOKEN" > config.py
+  - cat config.py
   - sudo pip3.6 install -r requirements.txt 
   - cd ..
 script:
