@@ -16,8 +16,8 @@ before_script:
   - cd ..
 script:
   # непосредственный запуск тестов
-  - $TRAVIS_BRANCH == "development" && ./.travis/forDevBranch.sh; 
-  - $TRAVIS_BRANCH == "master" && ./.travis/forMasterBranch.sh;
+  - test $TRAVIS_BRANCH != "development"; && ./.travis/forDevBranch.sh; 
+  - test $TRAVIS_BRANCH != "master"; && ./.travis/forMasterBranch.sh;
 after_success:
   # после удачного выполнения тестов
   - tree
