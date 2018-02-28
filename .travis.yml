@@ -6,6 +6,8 @@ stages:
     if: branch = development
   - name: test_mainserver
     if: branch = development
+  - name: deploy
+    if: branch = master
 
 jobs:
   include:
@@ -40,6 +42,10 @@ jobs:
 
     - stage: test_mainserver
       language: go
+      go:
+        - 1.9
+        - master 
+      install: true
       before_script:
       script: 
 
