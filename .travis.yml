@@ -41,11 +41,18 @@ jobs:
           - cd ..
 
     - stage: test_mainserver
+      services:
+          - postgresql
+      addons:
+          postgresql: "9.6"
       before_script:
+          - psql -c 'create database db_for_test;' -U postgres
+          - psql -c "create user test_user with password 'password';" -U postgres
+          - psql -c "GRANT ALL ON DATABASE db_for_test TO test_user;" -U postgres
           - wget https://storage.googleapis.com/golang/go1.9.3.linux-amd64.tar.gz
           - sudo tar -zxvf  go1.9.3.linux-amd64.tar.gz -C /usr/local/
-          - sudo export PATH=$PATH:/usr/local/go/bin
-          - sudo export GOPATH=$HOME
+          - export PATH=$PATH:/usr/local/go/bin
+          - export GOPATH=$HOME
           - go version
           - cd main-server
           - go get github.com/gorilla/mux
