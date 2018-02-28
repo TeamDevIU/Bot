@@ -45,7 +45,6 @@ jobs:
       go:
         - 1.9
         - master 
-      install: true
       before_script:
       script: 
     - stage: deploy
