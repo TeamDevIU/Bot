@@ -10,6 +10,8 @@ before_script:
   - wget https://bootstrap.pypa.io/get-pip.py
   - sudo python3.6 get-pip.py
   - cd TgBot
+  - echo -n "DIALOG_FLOW_TOKEN = " > config.py
+  - echo DIALOG_FLOW_TOKEN >> config.py
   - sudo pip3.6 install -r requirements.txt 
   - cd ..
 script:
