@@ -16,8 +16,20 @@ before_script:
   - cd ..
 script:
   # непосредственный запуск тестов
-  - test $TRAVIS_BRANCH != "development"; && ./.travis/forDevBranch.sh; 
-  - test $TRAVIS_BRANCH != "master"; && ./.travis/forMasterBranch.sh;
+  - function DevOrMaster()
+{
+ local result = 1;
+ if [ $TRAVIS_BRANCH == "development" ]; 
+    then 
+	 result = ./.travis/forDevBranch.sh; 
+    else if [$TRAVIS_BRANCH == "master"]; 
+      then  
+          result = ./.travis/forMasterBranch.sh; 
+      fi 
+    fi
+ echo "$result"
+}
+ - $(DevOrMaster)
 after_success:
   # после удачного выполнения тестов
   - tree
