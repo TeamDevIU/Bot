@@ -41,8 +41,13 @@ jobs:
           - cd ..
 
     - stage: test_mainserver
-      language: go
       before_script:
+          - wget https://dl.google.com/go/go1.9.4.linux-amd64.tar.gz
+          - sudo tar -xvf go1.9.4.linux-amd64.tar.gz
+          - sudo mv go /usr/local
+          - sudo export GOROOT=/usr/local/go
+          - sudo export GOPATH=$HOME
+          - sudo export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
           - cd main-server
           - go get github.com/gorilla/mux
           - go get github.com/lib/pq
