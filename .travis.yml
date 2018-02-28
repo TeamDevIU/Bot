@@ -50,8 +50,11 @@ jobs:
           - cd main-server
           - go get github.com/gorilla/mux
           - go get github.com/lib/pq
-          - 
+          - cd ..
       script: 
+          - cd main-server
+          - go test
+          - cd ..
     - stage: deploy
       before_script:
       script: 
