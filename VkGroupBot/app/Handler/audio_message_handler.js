@@ -2,6 +2,7 @@ const BaseHandler = require('./base_handler');
 let https = require('https');
 let fs = require('fs');
 let SpeechTranslator = require('../speech_translator');
+const CONFIG = require(`../${process.env.CONFIG}`);
 
 class AudioMessageHandler extends BaseHandler{
     constructor (message){
@@ -31,7 +32,7 @@ class AudioMessageHandler extends BaseHandler{
         };
 
         let onDownloadAudio = (res) => {
-            let speechTranslator = new SpeechTranslator(process.env.YANDEX_DEV_KEY);
+            let speechTranslator = new SpeechTranslator(CONFIG.YANDEX_DEV_KEY);
             res.pipe(speechTranslator.translate(onTranslateAudio, onErrorTranslateAudio));
         };
         let onErrorDownloadAudio = (e) => {
