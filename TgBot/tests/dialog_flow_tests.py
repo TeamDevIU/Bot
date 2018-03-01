@@ -3,7 +3,7 @@
 """
 
 import unittest
-from config import DIALOG_FLOW_TOKEN
+import os
 from dialog_flow import DialogFlow
 
 
@@ -15,7 +15,7 @@ class TestDialogFlow(unittest.TestCase):
         """Метод, который будет запускаться перед каждым тестом
         """
 
-        self.df = DialogFlow(DIALOG_FLOW_TOKEN)
+        self.df = DialogFlow(os.environ['DIALOG_FLOW_TOKEN'])
 
     def testSendMessage(self):
         """Метод для тестирования метода sendMessage
