@@ -1,0 +1,15 @@
+version: '2'
+services:
+  vkbot:
+    build:
+      context: ./VkGroupBot
+      dockerfile: Dockerfile
+    command: npm start
+    volumes:
+      - ./VkGroupBot:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "8000:8000"
+
+
+
