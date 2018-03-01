@@ -10,19 +10,18 @@
 import json
 import telebot
 from aiohttp import web
-from config import *
 from handlers.text_handler import TextHandler
 from handlers.voice_handler import VoiceHandler
 from dialog_flow import DialogFlow
 from main_server import MainServer
+import os
 
+WEBHOOK_URL_BASE = "https://{}".format(os.environ['WEBHOOK_HOST'])
+WEBHOOK_URL_PATH = "/{}/".format(os.environ['API_TOKEN'])
 
-WEBHOOK_URL_BASE = "https://{}".format(WEBHOOK_HOST)
-WEBHOOK_URL_PATH = "/{}/".format(API_TOKEN)
-
-bot = telebot.TeleBot(API_TOKEN)
-df = DialogFlow(DIALOG_FLOW_TOKEN)
-server = MainServer(SERVER_HOST)
+bot = telebot.TeleBot(os.environ['API_TOKEN'])
+df = DialogFlow(os.environ['DIALOG_FLOW_TOKEN'])
+server = MainServer(os.environ['SERVER_HOST'])
 
 app = web.Application()
 
@@ -108,6 +107,6 @@ bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH)
 
 web.run_app(
     app,
-    host=WEBHOOK_LISTEN,
-    port=WEBHOOK_PORT,
+    host=os.environ['WEBHOOK_LISTEN'],
+    port=os.environ['WEBHOOK_PORT'],
 )

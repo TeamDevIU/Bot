@@ -4,7 +4,7 @@
 :author: Melnikov Dmitry
 """
 
-from config import YANDEX_SPEECH_TOKEN
+import os
 import xml.etree.ElementTree as XmlElementTree
 import httplib2
 import uuid
@@ -28,7 +28,7 @@ def voiceToText(voiceBytes):
 
     url = YANDEX_ASR_PATH + '?uuid={0}&key={1}&topic={2}&lang={3}'.format(
         uuid.uuid4().hex,
-        YANDEX_SPEECH_TOKEN,
+        os.environ['YANDEX_SPEECH_TOKEN'],
         'notes',
         'ru-RU'
     )
