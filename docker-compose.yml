@@ -11,5 +11,13 @@ services:
     ports:
       - "8000:8000"
 
-
+  tgbot:
+    build:
+      context: ./TgBot
+      dockerfile: Dockerfile
+    command: python3 bot.py
+    volumes:
+      - ./TgBot:/usr/app/
+    ports:
+      - "8002:8002"
 
