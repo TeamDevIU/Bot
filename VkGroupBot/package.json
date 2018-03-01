@@ -1,0 +1,30 @@
+{
+  "name": "vkgroupbot",
+  "version": "1.0.0",
+  "description": "VkGroupBot",
+  "main": "./app/main.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apiai": "^4.0.3",
+    "body-parser": "^1.18.2",
+    "dialogflow": "^0.1.0",
+    "express": "^4.16.2",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "save": "^2.3.2",
+    "vk-node-sdk": "^0.1.8",
+    "xml2json": "^0.11.0",
+    "yandex-speech": "0.0.13"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.2",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-yuidoc": "^1.0.0",
+    "mocha": "^5.0.1",
+    "supertest": "^3.0.0"
+  }
+}
