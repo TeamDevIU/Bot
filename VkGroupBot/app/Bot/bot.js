@@ -15,7 +15,10 @@ module.exports = class VkBot extends VK.Group{
         let confingFile = './callback_server.json';
         webhook.config = Utils.jsonFromFile(confingFile);
         const app = express();
-        app.use(bodyParser());
+        app.use(bodyParser.urlencoded({
+            extended: true
+        }));
+        app.use(bodyParser.json());
 
         let handlers = new HttpCallbackHandlersChank().getHandlers();
         if(handlers !== undefined){
