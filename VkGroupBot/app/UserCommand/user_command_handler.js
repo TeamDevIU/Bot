@@ -1,4 +1,5 @@
 const CommandsFabric = require('./commands_fabric');
+const CONFIG = require(`../${process.env.CONFIG}`);
 
 module.exports = class UserCommandHandler {
     static calculate(process,user_id,user_name,req) {
@@ -6,7 +7,7 @@ module.exports = class UserCommandHandler {
         let intent_name = req.result.metadata.intentName;
         let text = req.result.fulfillment.speech;
         let commandsFabric = new CommandsFabric({
-            host: '18a8d12e.ngrok.io'
+            host: CONFIG.MAINSERVER_URL
         });
         switch (intent_name) {
             case "CreateRoom": {
