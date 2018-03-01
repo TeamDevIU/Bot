@@ -224,6 +224,9 @@ class MainServer():
         признак дополнения сообщения, сооsщение
         """
 
+        if not roomId:
+            return False, False, ""
+            
         url = self.host + "/roomInfo"
         parameters = {
                 "id": int(roomId),
