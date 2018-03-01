@@ -4,7 +4,8 @@
   "description": "VkGroupBot",
   "main": "./app/main.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "env CONFIG=../config.json node ./app/main.js"
   },
   "author": "",
   "license": "ISC",
