@@ -15,9 +15,19 @@ services:
     build:
       context: ./TgBot
       dockerfile: Dockerfile
-    command: python3 bot.py
+    command: ./bot.py
     volumes:
       - ./TgBot:/usr/app/
     ports:
       - "8002:8002"
+
+  mainserver:
+    build:
+      context: ./main-server
+      dockerfile: Dockerfile
+    command: sh run.sh
+    volumes:
+      - ./main-server:/go
+    ports:
+      - "8080:8080"
 
