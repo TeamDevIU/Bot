@@ -49,8 +49,8 @@ let Bot = new VkBot(CONFIG.VKTOKEN, {
 }]);
 
 
-cluster.setupMaster({exec: './app/worker.js'});
-for( let i = 0; i< process.env.WORKER ; i++){
+cluster.setupMaster({exec: 'worker.js'});
+for( let i = 0; i< CONFIG.WORKER ; i++){
     cluster.fork();
 }
 
