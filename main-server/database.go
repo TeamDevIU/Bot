@@ -9,9 +9,11 @@ import (
 )
 
 var (
-	USER     string
-	PASSWORD string
-	DB_NAME  string
+	USER      string
+	PASSWORD  string
+	DB_NAME   string
+	DB_ADRESS string
+	DB_PORT   string
 )
 
 type Database struct {
@@ -19,7 +21,7 @@ type Database struct {
 }
 
 func SetUpDatabase() (*Database, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", USER, PASSWORD, DB_NAME))
+	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", DB_ADRESS, DB_PORT, USER, PASSWORD, DB_NAME))
 	if err != nil {
 		return nil, err
 	}
