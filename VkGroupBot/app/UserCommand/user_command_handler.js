@@ -113,7 +113,7 @@ let Unsubscription = (options) => {
             user_id: user_id,
             message: text
         });
-        return
+        return;
     }
     text = text+"  ("+unsubscription_id+") ";
     process.send({
@@ -301,7 +301,7 @@ module.exports = class UserCommandHandler {
             RoomInfo,
             __Default
         };
-        return instance
+        return instance;
     }
 
     calculate(process,user_id,user_name,req) {
@@ -311,10 +311,10 @@ module.exports = class UserCommandHandler {
 
         logger.info(`${user_id}:  from Dialogflow intent:${intent_name}  speech: ${text} user_message: ${user_message}`);
         let result = Object.keys(this.intents).find((item) => {
-            return intent_name === item
+            return intent_name === item;
         });
         if(result === undefined){
-            logger.info(`SET DEFAULT INTENT FOR ${intent_name}  (speech: ${text} user_message: ${user_message})`)
+            logger.info(`SET DEFAULT INTENT FOR ${intent_name}  (speech: ${text} user_message: ${user_message})`);
             intent_name = "__Default";
         }
         this.intents[intent_name]({
