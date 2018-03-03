@@ -65,7 +65,7 @@ jobs:
           - cd ..
     - stage: deploy
       addons:
-        ssh_known_hosts: $PUBLIC_HOST
+        ssh_known_hosts: 13.95.158.175
 
       before_script:
           - openssl aes-256-cbc -K $encrypted_<...>_key -iv $encrypted_<...>_iv -in ./.travis/deploy_rsa.enc -out /tmp/deploy_rsa -d
