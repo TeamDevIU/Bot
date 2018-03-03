@@ -6,7 +6,7 @@ ssh-add /tmp/deploy_rsa # Add the private key to SSH
 
 
 # Skip this command if you don't need to execute any additional commands after deploying.
-ssh -o "StrictHostKeyChecking no" botuser@$PUBLIC_HOST -p $PORT <<EOF
+ssh -o "StrictHostKeyChecking no" botuser@$PUBLIC_HOST <<EOF
   cd Bot;
   git pull;
   rm TgBot/config.py;
