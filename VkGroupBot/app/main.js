@@ -1,7 +1,9 @@
 const VkBot = require('./Bot/bot');
 const cluster = require('cluster');
 const TaskDistributor = require('./tasks_distributor');
+const logger = require('./logger').get();
 const CONFIG = require(process.env.CONFIG);
+
 let Bot = new VkBot(CONFIG.VKTOKEN, {
     webhook: {
         url: CONFIG.URL,
@@ -67,6 +69,12 @@ td.onMessage(messageHandler);
  * @param {callback} [listener]
  */
 Bot.onMessage((message) => {
+    logger.info(JSON.stringify({
+        id: message.user_id,
+        attachments: message.attachments ? message.attachments[0].doc : null,
+        message: message.body,
+
+    }));
     message.setTyping();
     Bot.userGet(message.user_id, (response) => {
        message.user_name = `${response.last_name} ${response.first_name}`;

@@ -1,4 +1,5 @@
 const CommandsFabric = require('./commands_fabric');
+const logger = require('../logger').get();
 const CONFIG = require(`../${process.env.CONFIG}`);
 
 module.exports = class UserCommandHandler {
@@ -9,6 +10,8 @@ module.exports = class UserCommandHandler {
         let commandsFabric = new CommandsFabric({
             host: CONFIG.MAINSERVER_URL
         });
+
+        logger.info(`${user_id}:  from Dialogflow intent:${intent_name}  speech: ${text} user_message: ${user_message}`);
         switch (intent_name) {
             case "CreateRoom": {
                 let command = commandsFabric.createRoom(`${user_name} room`,user_id,user_name);
@@ -18,6 +21,7 @@ module.exports = class UserCommandHandler {
                         message: `${text} (${response.room_id})`
                     });
                 }).catch(err => {
+                    logger.error(`module: ${module} : ${err}`);
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
@@ -50,6 +54,7 @@ module.exports = class UserCommandHandler {
                         message: `${text}`
                     });
                 }).catch(err => {
+                    logger.error(`module: ${module} : ${err}`);
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
@@ -73,6 +78,7 @@ module.exports = class UserCommandHandler {
                         message: `${text}`
                     });
                 }).catch(err => {
+                    logger.error(`module: ${module} : ${err}`);
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
@@ -124,6 +130,7 @@ module.exports = class UserCommandHandler {
                         message: `${text} ${response.rooms}`
                     });
                 }).catch(err => {
+                    logger.error(`module: ${module} : ${err}`);
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
@@ -143,6 +150,7 @@ module.exports = class UserCommandHandler {
                         message: `${text} ${response.rooms}`
                     });
                 }).catch(err => {
+                    logger.error(`module: ${module} : ${err}`);
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
@@ -162,6 +170,7 @@ module.exports = class UserCommandHandler {
                         message: `${text} ${response.rooms}`
                     });
                 }).catch(err => {
+                    logger.error(`module: ${module} : ${err}`);
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`
@@ -202,6 +211,7 @@ module.exports = class UserCommandHandler {
                         message: message
                     });
                 }).catch(err => {
+                    logger.error(`module: ${module} : ${err}`);
                     process.send({
                         user_id: user_id,
                         message: `MainServer ERROR: ${err}`

@@ -1,15 +1,19 @@
 const BaseHandler = require('./base_handler');
+const logger = require('../logger').get();
 
 module.exports = class TextMessageHandler extends BaseHandler{
     constructor (message){
         super();
         if(typeof message !== "object"){
+            logger.error(`module: ${module} : is not object`);
             throw "is not object";
         }
 
         this.message = message.body;
-        if(!this.message && typeof this.message !== 'string')
+        if(!this.message && typeof this.message !== 'string') {
+            logger.error(`module: ${module} : not find message`);
             throw 'not find message';
+        }
     }
 
 
