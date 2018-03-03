@@ -29,7 +29,7 @@ ssh -o "StrictHostKeyChecking no" botuser@$PUBLIC_HOST <<EOF
  echo "go get github.com/gorilla/mux\n/
        go get github.com/lib/pq\n/
        go build\n/
-       ./go -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=$PRIVATE_HOST:8002 -vkbot=$PUBLIC_HOST:8000 -port=8080"
+       ./go -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=$PRIVATE_HOST:8002 -vkbot=$PUBLIC_HOST:8000 -port=8080" > main-server/run.sh
  sudo docker-compose build --no-cache;
  sudo docker-compose up
 EOF
