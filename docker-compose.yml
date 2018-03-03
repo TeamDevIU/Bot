@@ -1,0 +1,33 @@
+version: '2'
+services:
+  vkbot:
+    build:
+      context: ./VkGroupBot
+      dockerfile: Dockerfile
+    command: npm start
+    volumes:
+      - ./VkGroupBot:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "8000:8000"
+
+  tgbot:
+    build:
+      context: ./TgBot
+      dockerfile: Dockerfile
+    command: ./bot.py
+    volumes:
+      - ./TgBot:/usr/app/
+    ports:
+      - "8002:8002"
+
+  mainserver:
+    build:
+      context: ./main-server
+      dockerfile: Dockerfile
+    command: sh run.sh
+    volumes:
+      - ./main-server:/go
+    ports:
+      - "8080:8080"
+

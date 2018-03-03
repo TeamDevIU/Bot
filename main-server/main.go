@@ -269,12 +269,24 @@ func main() {
 	p := flag.Int("port", 8080, "setting port for serve")
 	port := strconv.Itoa(*p)
 
-	USER = *flag.String("db-user", "test_user", "setting database username")
-	PASSWORD = *flag.String("db-pass", "password", "setting database password")
-	DB_NAME = *flag.String("db-name", "test_db", "setting database name")
-	TelegramBotAdr = *flag.String("tg-bot", "http://0df39e31.ngrok.io", "setting telegram bot adress")
-	VKBotAdr = *flag.String("vk-bot", "http://c46d259b.ngrok.io/send_message", "setting vk bot adress")
+	user := flag.String("dbuser", "test_user", "setting database username")
+	password := flag.String("dbpass", "password", "setting database password")
+	dbName := flag.String("dbname", "test_db", "setting database name")
+	telegramBotAdr := flag.String("tgbot", "http://0df39e31.ngrok.io", "setting telegram bot adress")
+	vkBotAdr := flag.String("vkbot", "http://c46d259b.ngrok.io/send_message", "setting vk bot adress")
+	dbHost := flag.String("dbhost", "0.0.0.0", "Database adress")
+	dbPort := flag.String("dbport", "5432", "Database port")
 	flag.Parse()
+
+	USER = *user
+	PASSWORD = *password
+	DB_NAME = *dbName
+	DB_ADRESS = *dbHost
+	DB_PORT = *dbPort
+	TelegramBotAdr = *telegramBotAdr
+	VKBotAdr = *vkBotAdr
+
+	fmt.Println(USER, PASSWORD, DB_NAME, DB_ADRESS, DB_PORT, TelegramBotAdr, VKBotAdr)
 
 	r, err := ServeMainServer()
 	if err != nil {

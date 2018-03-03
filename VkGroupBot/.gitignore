@@ -63,3 +63,5 @@ typings/
 callback_server.json
 config.json
 .idea
+combined.log
+error.log
