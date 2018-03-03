@@ -115,9 +115,13 @@ module.exports = class UserCommandHandler {
             case "RoomsListAdmin": {
                 let command = commandsFabric.roomsList("admin",user_id);
                 command.execute().then(response => {
+                    let message = `${text}\n\n Список комнат в которых ты администратор: \n`;
+                    response.rooms.forEach((room) => {
+                        message += `id: ${room.id} Название : ${room.name}\n`;
+                    });
                     process.send({
                         user_id: user_id,
-                        message: `${text} ${JSON.stringify(response.rooms)}`
+                        message: `${text} ${response.rooms}`
                     });
                 }).catch(err => {
                     process.send({
@@ -130,6 +134,10 @@ module.exports = class UserCommandHandler {
             case "RoomsListReader": {
                 let command = commandsFabric.roomsList("reader",user_id);
                 command.execute().then(response => {
+                    let message = `${text}\n\n Список комнат на которые ты подписан: \n`;
+                    response.rooms.forEach((room) => {
+                       message += `id: ${room.id} Название : ${room.name}\n`;
+                    });
                     process.send({
                         user_id: user_id,
                         message: `${text} ${response.rooms}`
@@ -145,6 +153,10 @@ module.exports = class UserCommandHandler {
             case "RoomsListModerator": {
                 let command = commandsFabric.roomsList("moderator",user_id);
                 command.execute().then(response => {
+                    let message = `${text}\n\n Список комнат в которых ты модератор: \n`;
+                    response.rooms.forEach((room) => {
+                        message += `id: ${room.id} Название : ${room.name}\n`;
+                    });
                     process.send({
                         user_id: user_id,
                         message: `${text} ${response.rooms}`
@@ -168,9 +180,26 @@ module.exports = class UserCommandHandler {
                 }
                 let command = commandsFabric.roominfo(room_id);
                 command.execute().then(response => {
+                    let message = `${text}\n\n`;
+                    message += `Название: ${response.room_name}\n`;
+                    if(response.admin !== null && response.admin !== undefined){
+                        message += `Администратор: ${response.admin.name} (${response.admin.type} ${response.admin.id})\n`;
+                    }
+                    if(response.moderators !== null && response.moderators !== undefined){
+                        message += 'Модераторы:\n';
+                        response.moderators.forEach((moderator) => {
+                            message += `${moderator.name} (${moderator.type} ${moderator.id})\n`;
+                        });
+                    }
+                    if(response.reader !== null && response.reader !== undefined){
+                        message += 'Подписчики:\n';
+                        response.reader.forEach((reader) => {
+                            message += `${reader.name} (${reader.type} ${reader.id})\n`;
+                        });
+                    }
                     process.send({
                         user_id: user_id,
-                        message: `${text} ${JSON.stringify(response)}`
+                        message: message
                     });
                 }).catch(err => {
                     process.send({
