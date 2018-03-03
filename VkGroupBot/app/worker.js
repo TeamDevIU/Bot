@@ -12,10 +12,12 @@ const logger = require('./logger').get();
  * @class onResponse
  * @constructor
  * @param {number} [user_id] id пользователя в вк.
+ * @param {string} user_name
  * @param {Object} [response] ответ от dialogflow.
  */
 function onResponse(user_id,user_name,response) {
-    UserCommandHandler.calculate(process,user_id,user_name,response);
+    let uch = new UserCommandHandler();
+    uch.calculate(process,user_id,user_name,response);
 }
 
 /**

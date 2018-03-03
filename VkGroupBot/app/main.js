@@ -3,7 +3,7 @@ const cluster = require('cluster');
 const TaskDistributor = require('./tasks_distributor');
 const logger = require('./logger').get();
 const CONFIG = require(process.env.CONFIG);
-
+logger.info("RUN VKBOT");
 let Bot = new VkBot(CONFIG.VKTOKEN, {
     webhook: {
         url: CONFIG.URL,
