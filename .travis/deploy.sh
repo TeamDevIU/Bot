@@ -26,10 +26,10 @@ ssh -o "StrictHostKeyChecking no" botuser@$PUBLIC_HOST <<EOF
              \"MAINSERVER_URL\":\"$PRIVATE_HOST:8080\",\n /
              \"WORKER\":2"}" > VkGroupBot/config.json;
  rm main-server run.sh;
- echo "go get github.com/gorilla/mux \n /
-            go get github.com/lib/pq  \n /
-            go build \n /
-            ./go -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=$PRIVATE_HOST:8002 -vkbot=$PUBLIC_HOST:8000 -port=8080"
+ echo "go get github.com/gorilla/mux\n/
+       go get github.com/lib/pq\n/
+       go build\n/
+       ./go -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=$PRIVATE_HOST:8002 -vkbot=$PUBLIC_HOST:8000 -port=8080"
  sudo docker-compose build --no-cache;
  sudo docker-compose up
 EOF
