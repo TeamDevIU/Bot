@@ -68,7 +68,7 @@ jobs:
         ssh_known_hosts: $PUBLIC_HOST
 
       before_script:
-          - openssl aes-256-cbc -K $encrypted_<...>_key -iv $encrypted_<...>_iv -in .travis/deploy_rsa.enc -out /tmp/deploy_rsa -d
+          - openssl aes-256-cbc -K $encrypted_<...>_key -iv $encrypted_<...>_iv -in ./.travis/deploy_rsa.enc -out /tmp/deploy_rsa -d
           - eval "$(ssh-agent -s)"
           - chmod 600 /tmp/deploy_rsa
           - ssh-add /tmp/deploy_rsa
