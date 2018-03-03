@@ -13,6 +13,7 @@ let Bot = new VkBot(CONFIG.VKTOKEN, {
     method: 'post',
     path: '/send_message',
     callback: (request,response) => {
+        logger.info(`from MainServer: ${JSON.stringify(request)}`);
         let user_id = request.body.user_id;
         let message = request.body.message;
 
@@ -32,8 +33,11 @@ let Bot = new VkBot(CONFIG.VKTOKEN, {
                 message: "no message"
             };
         }
-        if(flag_error)
+        if(flag_error) {
+            logger.info(`to MainServer: ${JSON.stringify(res)} `);
             response.send(res);
+            return;
+        }
 
 
         let result = messageHandler({
@@ -45,7 +49,7 @@ let Bot = new VkBot(CONFIG.VKTOKEN, {
             error: 200,
             message: 'OK'
         };
-
+        logger.info(`to MainServer: ${JSON.stringify(res)} `);
         response.send(res);
     }
 }]);
