@@ -1,7 +1,9 @@
 const VkBot = require('./Bot/bot');
 const cluster = require('cluster');
 const TaskDistributor = require('./tasks_distributor');
+const logger = require('./logger').get();
 const CONFIG = require(process.env.CONFIG);
+logger.info("RUN VKBOT");
 let Bot = new VkBot(CONFIG.VKTOKEN, {
     webhook: {
         url: CONFIG.URL,
@@ -11,6 +13,7 @@ let Bot = new VkBot(CONFIG.VKTOKEN, {
     method: 'post',
     path: '/send_message',
     callback: (request,response) => {
+        logger.info(`from MainServer: ${JSON.stringify(request)}`);
         let user_id = request.body.user_id;
         let message = request.body.message;
 
@@ -30,8 +33,11 @@ let Bot = new VkBot(CONFIG.VKTOKEN, {
                 message: "no message"
             };
         }
-        if(flag_error)
+        if(flag_error) {
+            logger.info(`to MainServer: ${JSON.stringify(res)} `);
             response.send(res);
+            return;
+        }
 
 
         let result = messageHandler({
@@ -43,7 +49,7 @@ let Bot = new VkBot(CONFIG.VKTOKEN, {
             error: 200,
             message: 'OK'
         };
-
+        logger.info(`to MainServer: ${JSON.stringify(res)} `);
         response.send(res);
     }
 }]);
@@ -67,6 +73,12 @@ td.onMessage(messageHandler);
  * @param {callback} [listener]
  */
 Bot.onMessage((message) => {
+    logger.info(JSON.stringify({
+        id: message.user_id,
+        attachments: message.attachments ? message.attachments[0].doc : null,
+        message: message.body,
+
+    }));
     message.setTyping();
     Bot.userGet(message.user_id, (response) => {
        message.user_name = `${response.last_name} ${response.first_name}`;

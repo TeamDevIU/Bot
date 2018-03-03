@@ -4,17 +4,20 @@ const VK = require('vk-node-sdk');
 const apiai = require('apiai');
 const CONFIG = require(process.env.CONFIG);
 let dialogflow = apiai(CONFIG.DIALOGFLOW_CLIENT_ID);
+const logger = require('./logger').get();
 /**
  * Функция обработки команды от пользователя
- * с последующей отправкой отвека  чат вк.
+ * с последующей отправкой ответа в чат вк.
  * @module worker.js
  * @class onResponse
  * @constructor
  * @param {number} [user_id] id пользователя в вк.
+ * @param {string} user_name
  * @param {Object} [response] ответ от dialogflow.
  */
 function onResponse(user_id,user_name,response) {
-    UserCommandHandler.calculate(process,user_id,user_name,response);
+    let uch = new UserCommandHandler();
+    uch.calculate(process,user_id,user_name,response);
 }
 
 /**
@@ -27,7 +30,7 @@ function onResponse(user_id,user_name,response) {
  * @param {text}  [error] ответ от dialogflow.
  */
 function onErrorMessage(user_id,error) {
-    console.log(error);
+    logger.error(`module: ${module} : ${error}`);
     let message = {
         user_id: user_id,
         message: 'у меня ошибки какие-то: '+ JSON.stringify(error)
@@ -47,7 +50,6 @@ function onErrorMessage(user_id,error) {
  *
  */
 process.on('message', task => {
-    //console.log(`${process.pid} get message: ${task.message.body}`);
     let message = task.message;
     let handler = HandlerFabric.get(message);
     handler.setDialogflow(dialogflow);
