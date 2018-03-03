@@ -71,32 +71,6 @@ jobs:
           - openssl aes-256-cbc -K $encrypted_515a335f0d8d_key -iv $encrypted_515a335f0d8d_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
           - echo -e "Host *\n\tStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
           - chmod +x .travis/deploy.sh
-          - .travis/deploy.sh
       script: 
-          - cd Bot;
-          - git pull;
-          - rm TgBot/config.py;
-          - echo "SERVER_HOST=\"http://$PRIVATE_HOST:8080\"\n /
-            WEBHOOK_HOST=\"$SERVER_DNS/tg\"\n /
-            API_TOKEN=\"$API_TOKEN\"\n /
-            DIALOG_FLOW_TOKEN=\"$DIALOG_FLOW_TOKEN\"\n /
-            WEBHOOK_LISTEN=\"0.0.0.0\"\n  /
-            WEBHOOK_PORT=\"8002\"\n /
-            YANDEX_SPEECH_TOKEN=\"$YANDEX_SPEECH_TOKEN\"" > TgBot/config.py;
-          - rm VkGroupBot/config.json;
-          - echo "{\"YANDEX_DEV_KEY\":\"$YANDEX_SPEECH_TOKEN\",\n /
-             \"VKTOKEN\":\"$VK_TOKEN\",\n /
-             \"DIALOGFLOW_CLIENT_ID\":\"$DIALOG_FLOW_TOKEN\",\n /
-             \"PORT_BOT\":8000 \n, /
-             \"URL\":\"https://$PUBLIC_HOST/vk/callback\",\n /
-             \"MAINSERVER_URL\":\"$PRIVATE_HOST:8080\",\n /
-             \"WORKER\":2"}" > VkGroupBot/config.json;
-          - rm main-server run.sh;
-          - echo "go get github.com/gorilla/mux \n /
-            go get github.com/lib/pq  \n /
-            go build \n /
-            ./go -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=$PRIVATE_HOST:8002 -vkbot=$PUBLIC_HOST:8000 -port=8080"
-          - sudo docker-compose build --no-cache;
-          - sudo docker-compose up
-      
+          - .travis/deploy.sh
 
