@@ -70,7 +70,7 @@ td.onMessage(messageHandler);
 
 
 /**
- * Вызывается при входящем сообщении от вк
+ * Вызывается при входящем сообщении от вк пользователя
  * @param {callback} [listener]
  */
 Bot.onMessage((message) => {
