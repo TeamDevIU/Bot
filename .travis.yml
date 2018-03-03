@@ -1,6 +1,6 @@
 language: generic
 addons:
-  ssh_known_hosts: 13.95.158.175
+  ssh_known_hosts: $PUBLIC_HOST
 
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_<...>_key -iv $encrypted_<...>_iv -in .travis/deploy_rsa.enc -out /tmp/deploy_rsa -d
@@ -38,7 +38,7 @@ deploy:
     - sudo docker-compose build --no-cache;
     - sudo docker-compose up
   on:
-    branch: master
+    branch: development
 
 stages:
   - name: test_vkbot
