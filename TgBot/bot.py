@@ -11,6 +11,8 @@ import json
 import telebot
 from aiohttp import web
 from config import *
+import logging
+import logging.config
 from handlers.text_handler import TextHandler
 from handlers.voice_handler import VoiceHandler
 from dialog_flow import DialogFlow
@@ -24,6 +26,9 @@ bot = telebot.TeleBot(API_TOKEN)
 df = DialogFlow(DIALOG_FLOW_TOKEN)
 server = MainServer(SERVER_HOST)
 
+logging.config.fileConfig('log_config')
+logger = logging.getLogger("TgBot")
+
 app = web.Application()
 
 async def handleTg(request):
@@ -33,9 +38,9 @@ async def handleTg(request):
     :param request: объект-запрос
 
     """
-
     if request.match_info.get('token') == bot.token:
         requestBodyDict = await request.json()
+        logger.info("Request from Telegram Server:\n{}".format(requestBodyDict))
         update = telebot.types.Update.de_json(requestBodyDict)
         bot.process_new_updates([update])
         return web.Response()
@@ -52,30 +57,33 @@ async def handleMainServer(request):
     """
     try:
         requestBodyDict = await request.json()
+        logger.info("Request from Main Server:\n{}".format(requestBodyDict))
     except BaseException as e:
-        print(e)
+        logger.error("Exception in handleMainServer:\n{}".format(e))
         return web.Response(status=500, 
             text="Internal server error")
     
 
     if requestBodyDict:
-        print(requestBodyDict)
         try:
             user_id = int(requestBodyDict['user_id'])
             message = str(requestBodyDict['message'])
         except (KeyError, ValueError) as e:
+            logger.error("Exception in handleMainServer:\n{}".format(e))
             return web.Response(status=400, 
                 text="Bad request. Check request body")
         else:
             try:
                 bot.send_message(user_id, message)
             except telebot.apihelper.ApiException as e:
-                print(e)
+                logger.error("Telegram API exception in handleMainServer:\n{}".format(e))
                 return web.Response(status=400, 
                     text="Bad request. Chat not found")
             else:
+                logger.info("Success send message '{0}' to {1}".format(message, user_id))
                 return web.Response()
     else:
+        logger.error("Bad request from main server")
         return web.Response(status=400, 
                 text="Bad request. Check request body")
 
@@ -99,12 +107,13 @@ def answer(message):
         else:
             TextHandler(bot, message, server, df)
     except telebot.apihelper.ApiException as e:
-        print(e)
+        logger.error("Telegram API exception:\n{}".format(e))
         bot.send_message(message.chat.id, "Повтори, пожалуйста.")
     
 
 bot.remove_webhook()
 bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH)
+logger.info("\*/\*/\*/\*/\*/ START BOT \*/\*/\*/\*/\*/\*/")
 
 web.run_app(
     app,

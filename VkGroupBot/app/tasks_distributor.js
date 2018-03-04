@@ -1,3 +1,4 @@
+const logger = require('./logger').get();
 /**
  * необходим для распределения задач на
  * дочернее процессы. Распределяет задачи по кругу
@@ -10,8 +11,11 @@ module.exports = class TasksDistributor{
      * @param {Object} [workers]
      */
     constructor(workers) {
-        if (workers === undefined)
+        if (workers === undefined){
+            logger.error(`module: ${module} : workers not init`);
             throw "workers not init";
+        }
+
         this.workers = workers;
         this.size = Object.keys(workers).length;
         this.i = 0;

@@ -1,4 +1,5 @@
 language: generic
+
 stages:
   - name: test_vkbot
     if: branch = development
@@ -63,6 +64,13 @@ jobs:
           - go test
           - cd ..
     - stage: deploy
+      addons:
+        ssh_known_hosts: 13.95.158.175
+
       before_script:
+          - openssl aes-256-cbc -K $encrypted_515a335f0d8d_key -iv $encrypted_515a335f0d8d_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
+          - echo -e "Host *\n\tStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
+          - chmod +x .travis/deploy.sh
       script: 
+          - .travis/deploy.sh
 

@@ -19,8 +19,11 @@ func init() {
 	DB_NAME = "db_for_test"
 	DB_ADRESS = "0.0.0.0"
 	DB_PORT = "5432"
+<<<<<<< HEAD
 	var buf bytes.Buffer
 	Logger = log.New(&buf, "logger: ", log.Lshortfile)
+=======
+>>>>>>> origin/development
 }
 
 // CaseResponse

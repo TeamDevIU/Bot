@@ -1,6 +1,7 @@
 const TextMessageHandler = require('./text_message_handler');
 const AudioMessageHandler = require('./audio_message_handler');
 const MessageParser = require('./message_parser');
+const logger = require('../logger').get();
 
 module.exports = class HandlerFabric {
     static get(message){
@@ -13,6 +14,7 @@ module.exports = class HandlerFabric {
                 return new AudioMessageHandler(message);
             }
             default : {
+                logger.error(`module: ${module} : no handler for ${JSON.stringify(message)}`);
                 throw "no handler";
             }
         }

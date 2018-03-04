@@ -20,16 +20,17 @@ class VoiceHandler(BaseHandler):
         try:
             text = voiceToText(response.content)
         except SpeechException as e:
-            print(e)
+            self.logger.error("Speech handler exception:\n{}".format(e))
             self.sendMessage(self.message.chat.id, "Я не могу понять, что ты говоришь :(")
         else:
             try:
                 response = self.df.sendMessage(text)
             except DialogFlowException as e:
-                print(e)
+                self.logger.error("Dialog Flow exception:\n{}".format(e))
                 self.sendMessage(self.message.chat.id,
                                 "Возникли неполадки :(\nПовтори, пожалуйста.")
             else:
+                self.logger.debug("Intent: {}".format(response['intentName']))
                 if response['intentName'] == None:
                     self.sendMessage(self.message.chat.id, response['speech'])
                 else:
