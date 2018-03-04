@@ -24,14 +24,14 @@ var (
 
 // Создание комнаты
 func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
-	Logger.Println("handle create-room request from " + r.RemoteAddr)
+	Logger.Print("handle create-room request from " + r.RemoteAddr)
 	body, _ := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
 	createRoom := new(CreateRoom)
 	err := json.Unmarshal(body, createRoom)
 	if err != nil {
-		Logger.Println("error while parsing request body: " + err.Error())
+		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &CreateRoomResponse{
 			ID:  -1,
 			Err: err.Error(),
@@ -44,7 +44,7 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !checkStruct(createRoom) {
-		Logger.Println("incomplete request body")
+		Logger.Print("incomplete request body")
 		resp := &CreateRoomResponse{
 			ID:  -1,
 			Err: "Bad request body, check api docs",
@@ -73,13 +73,13 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 // Получение списка комнат, доступных пользователю
 // Выводит либо все группы, либо только те, которые можно удалять
 func handleGetRooms(w http.ResponseWriter, r *http.Request) {
-	Logger.Println("handle get-rooms request from " + r.RemoteAddr)
+	Logger.Print("handle get-rooms request from " + r.RemoteAddr)
 	// Получаем инфу о том, какой список надо вывести
 	role := r.URL.Query().Get("role")
 	userID, err := strconv.Atoi(r.URL.Query().Get("userID"))
 	botType := r.URL.Query().Get("botType")
 	if err != nil {
-		Logger.Println("error while parsing get-room query: " + err.Error())
+		Logger.Print("error while parsing get-room query: " + err.Error())
 		w.WriteHeader(400)
 		w.Write([]byte(err.Error()))
 		return
@@ -109,14 +109,14 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 
 // Подписка юзера на комнату
 func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
-	Logger.Println("handle new-subscribe request from " + r.RemoteAddr)
+	Logger.Print("handle new-subscribe request from " + r.RemoteAddr)
 	body, _ := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
 	subscribe := new(Subscribe)
 	err := json.Unmarshal(body, subscribe)
 	if err != nil {
-		Logger.Println("error while parsing request body: " + err.Error())
+		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &ErrorResponse{
 			Err: "Bad request body, check api docs",
 		}
@@ -127,7 +127,7 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !checkStruct(subscribe) {
-		Logger.Println("incomplete request body")
+		Logger.Print("incomplete request body")
 		resp := &ErrorResponse{
 			Err: "Bad request body, check api docs",
 		}
@@ -153,14 +153,14 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 
 // Отправка сообщений
 func handeSendMessage(w http.ResponseWriter, r *http.Request) {
-	Logger.Println("handle send-message request from " + r.RemoteAddr)
+	Logger.Print("handle send-message request from " + r.RemoteAddr)
 	body, _ := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
 	sendMessage := new(SendMessage)
 	err := json.Unmarshal(body, sendMessage)
 	if err != nil {
-		Logger.Println("error while parsing request body: " + err.Error())
+		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &ErrorResponse{
 			Err: "Bad request body, check api docs",
 		}
@@ -171,7 +171,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !checkStruct(sendMessage) {
-		Logger.Println("incomplete request body")
+		Logger.Print("incomplete request body")
 		resp := &ErrorResponse{
 			Err: "Bad request body, check api docs",
 		}
@@ -208,16 +208,16 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 }`
 				res, err := http.Post(ur, "application/json", strings.NewReader(req))
 				if err != nil {
-					Logger.Println("error while sending message to", ur, "with id ", recip.ID, recip.BotType, ": "+err.Error())
+					Logger.Print("error while sending message to", ur, "with id ", recip.ID, recip.BotType, ": "+err.Error())
 					return
 				}
 				defer res.Body.Close()
 				resBody, _ := ioutil.ReadAll(res.Body)
-				Logger.Println("Response from ", ur, "(id=", recip.ID, recip.BotType, ")", string(resBody))
+				Logger.Print("Response from ", ur, "(id=", recip.ID, recip.BotType, "): ", string(resBody))
 			}(i)
 		}
 	} else {
-		Logger.Println("user has no rights to sending message")
+		Logger.Print("user has no rights to sending message")
 		resp := &ErrorResponse{
 			Err: "You have no rights for sending message to this room",
 		}
@@ -227,10 +227,10 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGetFullRoomInfo(w http.ResponseWriter, r *http.Request) {
-	Logger.Println("handle get-full-room-info request from " + r.RemoteAddr)
+	Logger.Print("handle get-full-room-info request from " + r.RemoteAddr)
 	roomID, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
-		Logger.Println("error while parsing get-full-room-info query: " + err.Error())
+		Logger.Print("error while parsing get-full-room-info query: " + err.Error())
 		resp := GetFullRoomInfoResponse{
 			Err: err.Error(),
 		}
@@ -272,6 +272,7 @@ func main() {
 		log.Fatal(err)
 	}
 	Logger = log.New(f, "MainServer: ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Llongfile)
+	Logger.Print("== Main Server Started ==")
 
 	p := flag.Int("port", 8080, "setting port for serve")
 	port := strconv.Itoa(*p)
