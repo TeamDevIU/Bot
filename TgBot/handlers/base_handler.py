@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import logging
+
 class BaseHandler():
     """Базовый класс обработчика сообщений
 
@@ -18,7 +20,9 @@ class BaseHandler():
         self.message = message
         self.server = server
         self.df = df
+        self.logger = logging.getLogger("TgBot.UserMessageHandler")
         self.handle()
+       
 
     def sendMessage(self, id, text):
         """Метод отправки сообщения пользователю
