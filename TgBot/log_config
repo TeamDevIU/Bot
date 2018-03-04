@@ -1,0 +1,32 @@
+[loggers]
+keys=root,TgBot
+ 
+[handlers]
+keys=fileHandler, consoleHandler
+ 
+[formatters]
+keys=myFormatter
+ 
+[logger_root]
+level=CRITICAL
+handlers=consoleHandler
+ 
+[logger_TgBot]
+level=DEBUG
+handlers=fileHandler
+qualname=TgBot
+ 
+[handler_consoleHandler]
+class=StreamHandler
+level=DEBUG
+formatter=myFormatter
+args=(sys.stdout,)
+ 
+[handler_fileHandler]
+class=FileHandler
+formatter=myFormatter
+args=("Tgbot.log",)
+ 
+[formatter_myFormatter]
+format=%(asctime)s - %(module)s - %(name)s - %(levelname)s - %(message)s
+datefmt=

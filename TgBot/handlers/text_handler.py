@@ -14,11 +14,11 @@ class TextHandler(BaseHandler):
         try:
             response = self.df.sendMessage(self.message.text)
         except DialogFlowException as e:
-            print(e)
+            self.logger.error("Dialog Flow exception:\n{}".format(e))
             self.sendMessage(self.message.chat.id,
                             "Возникли неполадки :(\nПовтори, пожалуйста.")
         else:
-            print("Intent:", response['intentName'])
+            self.logger.debug("Intent: {}".format(response['intentName']))
             if response['intentName'] == None:
                 self.sendMessage(self.message.chat.id, response['speech'])
             else:
@@ -27,7 +27,7 @@ class TextHandler(BaseHandler):
                     self.message,
                     response['parameters']
                 )
-               
+                
                 if isAppend:
                         response['speech'] += s
 
