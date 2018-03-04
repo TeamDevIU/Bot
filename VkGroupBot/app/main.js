@@ -3,6 +3,7 @@ const cluster = require('cluster');
 const TaskDistributor = require('./tasks_distributor');
 const logger = require('./logger').get();
 const CONFIG = require(process.env.CONFIG);
+
 logger.info("RUN VKBOT");
 let Bot = new VkBot(CONFIG.VKTOKEN, {
     webhook: {
@@ -69,7 +70,7 @@ td.onMessage(messageHandler);
 
 
 /**
- * Вызывается при входящем сообщении от вк
+ * Вызывается при входящем сообщении от вк пользователя
  * @param {callback} [listener]
  */
 Bot.onMessage((message) => {
