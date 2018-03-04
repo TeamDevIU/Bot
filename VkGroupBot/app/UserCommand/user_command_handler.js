@@ -157,7 +157,7 @@ let RoomsListAdmin = (options) => {
         });
         process.send({
             user_id: user_id,
-            message: `${text} ${response.rooms}`
+            message: message
         });
     }).catch(err => {
         logger.error(`module: ${module} : ${err}`);
@@ -183,7 +183,7 @@ let RoomsListReader = (options) => {
         });
         process.send({
             user_id: user_id,
-            message: `${text} ${response.rooms}`
+            message: message
         });
     }).catch(err => {
         logger.error(`module: ${module} : ${err}`);
@@ -209,7 +209,7 @@ let RoomsListModerator = (options) => {
         });
         process.send({
             user_id: user_id,
-            message: `${text} ${response.rooms}`
+            message: message
         });
     }).catch(err => {
         logger.error(`module: ${module} : ${err}`);
