@@ -11,12 +11,12 @@ ssh -o "StrictHostKeyChecking no" botuser@$PUBLIC_HOST <<EOF
   git pull;
   rm TgBot/config.py;
   echo "SERVER_HOST=\"http://$PRIVATE_HOST:8080\"
-            WEBHOOK_HOST=\"$SERVER_DNS/tg\"
-            API_TOKEN=\"$API_TOKEN\"
-            DIALOG_FLOW_TOKEN=\"$DIALOG_FLOW_TOKEN\"
-            WEBHOOK_LISTEN=\"0.0.0.0\"
-            WEBHOOK_PORT=\"8002\"
-            YANDEX_SPEECH_TOKEN=\"$YANDEX_SPEECH_TOKEN\"" > TgBot/config.py;
+WEBHOOK_HOST=\"$SERVER_DNS/tg\"
+API_TOKEN=\"$API_TOKEN\"
+DIALOG_FLOW_TOKEN=\"$DIALOG_FLOW_TOKEN\"
+WEBHOOK_LISTEN=\"0.0.0.0\"
+WEBHOOK_PORT=\"8002\"
+YANDEX_SPEECH_TOKEN=\"$YANDEX_SPEECH_TOKEN\"" > TgBot/config.py;
   cat TgBot/config.py;         
   rm VkGroupBot/config.json;
   echo "{\"YANDEX_DEV_KEY\":\"$YANDEX_SPEECH_TOKEN\",
