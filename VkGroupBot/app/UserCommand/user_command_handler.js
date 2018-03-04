@@ -151,7 +151,7 @@ let RoomsListAdmin = (options) => {
 
     let command = commandsFabric.roomsList("admin",user_id);
     command.execute().then(response => {
-        let message = `${text}\n\n Список комнат в которых ты администратор: \n`;
+        let message = `${text}\n\n`;
         response.rooms.forEach((room) => {
             message += `id: ${room.id} Название : ${room.name}\n`;
         });
@@ -177,7 +177,7 @@ let RoomsListReader = (options) => {
 
     let command = commandsFabric.roomsList("reader",user_id);
     command.execute().then(response => {
-        let message = `${text}\n\n Список комнат на которые ты подписан: \n`;
+        let message = `${text}\n\n`;
         response.rooms.forEach((room) => {
             message += `id: ${room.id} Название : ${room.name}\n`;
         });
@@ -203,7 +203,7 @@ let RoomsListModerator = (options) => {
 
     let command = commandsFabric.roomsList("moderator",user_id);
     command.execute().then(response => {
-        let message = `${text}\n\n Список комнат в которых ты модератор: \n`;
+        let message = `${text}\n\n`;
         response.rooms.forEach((room) => {
             message += `id: ${room.id} Название : ${room.name}\n`;
         });
