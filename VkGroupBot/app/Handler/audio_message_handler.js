@@ -24,7 +24,7 @@ module.exports = class AudioMessageHandler extends BaseHandler{
         let df = this.dialogflow;
         let audioUrl = this.audioUrl;
         let onTranslateAudio = (res) => {
-            logger.info(`ya.speach translate ${audioUrl}`);
+            logger.info(`ya.speech translate ${audioUrl}`);
             let req = df.textRequest(res,{
                 sessionId: sessionId
             });
