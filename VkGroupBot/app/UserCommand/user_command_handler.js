@@ -17,7 +17,7 @@ let onErrorFromServer = (type,error,user_id) => {
 };
 
 let getErrorForCatch = (user_id) => {
-  return (err) => onErrorFromServer('error',err,user_id)
+  return (err) => onErrorFromServer('error',err,user_id);
 };
 
 class CheckError {
@@ -35,7 +35,7 @@ class CheckError {
         } else {
             onNoError(response,this.user_id);
         }
-    };
+    }
 
 }
 
@@ -201,7 +201,7 @@ let RoomInfo = (options) => {
                         message += `${reader.name} (${reader.type} ${reader.id})\n`;
                     });
                 }
-                sendToUser(user_id,message)
+                sendToUser(user_id,message);
             }
         );
     }).catch(getErrorForCatch(user_id));
