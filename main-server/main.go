@@ -34,7 +34,7 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &CreateRoomResponse{
 			ID:  -1,
-			Err: err.Error(),
+			Err: "Bad values in request body",
 		}
 		respBody, _ := json.Marshal(resp)
 
@@ -83,7 +83,7 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		resp := &GetRoomsResponse{
 			Rooms: nil,
-			Err:   err.Error(),
+			Err:   "Bad values in request query",
 		}
 		respBody, _ := json.Marshal(resp)
 		w.Write(respBody)
@@ -123,7 +123,7 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &ErrorResponse{
-			Err: err.Error(),
+			Err: "Bad values in request body",
 		}
 		respBody, _ := json.Marshal(resp)
 		w.WriteHeader(400)
@@ -167,7 +167,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &ErrorResponse{
-			Err: err.Error(),
+			Err: "Bad values in request body",
 		}
 		respBody, _ := json.Marshal(resp)
 		w.WriteHeader(400)
@@ -238,7 +238,7 @@ func handleGetFullRoomInfo(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing get-full-room-info query: " + err.Error())
 		resp := GetFullRoomInfoResponse{
-			Err: err.Error(),
+			Err: "Bad values in request query",
 		}
 		respBody, _ := json.Marshal(resp)
 		w.WriteHeader(400)

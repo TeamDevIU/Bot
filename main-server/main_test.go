@@ -98,7 +98,7 @@ func TestAPI(t *testing.T) {
 			},
 			Result: CR{
 				"room_id": -1,
-				"error":   "json: cannot unmarshal string into Go struct field UserInfo.id of type int",
+				"error":   "Bad values in request body",
 			},
 			Status: 400,
 		},
@@ -165,7 +165,7 @@ func TestAPI(t *testing.T) {
 				},
 			},
 			Result: CR{
-				"error": "json: cannot unmarshal string into Go struct field UserInfo.id of type int",
+				"error": "Bad values in request body",
 			},
 			Status: 400,
 		},
@@ -204,7 +204,7 @@ func TestAPI(t *testing.T) {
 			Query: "role=admin&userID=lEEt&botType=tg",
 			Result: CR{
 				"rooms": nil,
-				"error": "strconv.Atoi: parsing \"lEEt\": invalid syntax",
+				"error": "Bad values in request query",
 			},
 			Status: 400,
 		},
@@ -258,7 +258,7 @@ func TestAPI(t *testing.T) {
 				},
 			},
 			Result: CR{
-				"error": "json: cannot unmarshal string into Go struct field SendMessage.room_id of type int",
+				"error": "Bad values in request body",
 			},
 			Status: 400,
 		},
@@ -316,7 +316,7 @@ func TestAPI(t *testing.T) {
 				},
 				"moderators": nil,
 				"reader":     nil,
-				"error":      "strconv.Atoi: parsing \"sas\": invalid syntax",
+				"error":      "Bad values in request query",
 			},
 			Status: 400,
 		},
