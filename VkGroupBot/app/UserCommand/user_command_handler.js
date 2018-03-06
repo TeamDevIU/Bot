@@ -3,26 +3,44 @@ const logger = require('../logger').get();
 const CONFIG = require(`../${process.env.CONFIG}`);
 let instance;
 
-let onErrorFromServer = (process,response) => {
-    logger.info(`module: ${module.id} MainServer error: ${response.error}`);
-    process.send({
-        user_id: user_id,
-        message: `Запрос не выполнен :( \n( ${response.error} )`
-    });
+let sendToUser = (user_id,message) => {
+    process.send({user_id,message});
 };
 
-let checkErrorInResponse = (response,process,onError,onNoError) => {
-  if(response.error === 'none'){
-      onError(process,response);
-  } else {
-      onNoError(process,response);
-  }
+let onErrorFromServer = (type,error,user_id) => {
+    if(type !== 'info' && type !== 'error'){
+        logger.error(`module: ${module.id} Type of logger: ${type}`);
+        throw 'wrong type for logger';
+    }
+    logger.log(type,`module: ${module.id} MainServer error: ${error}`);
+    sendToUser(user_id,`Запрос не выполнен :( \n( ${error} )`);
 };
+
+let getErrorForCatch = (user_id) => {
+  return (err) => onErrorFromServer('error',err,user_id)
+};
+
+class CheckError {
+    constructor(user_id){
+        if(user_id === undefined){
+            logger.error(`module: ${module.id} no user_id`);
+            throw 'no user id';
+        }
+        this.user_id = user_id;
+    }
+
+    checkErrorInResponse(response,onNoError) {
+        if(response.error !== 'none'){
+            onErrorFromServer('info',response.error,this.user_id);
+        } else {
+            onNoError(response,this.user_id);
+        }
+    };
+
+}
 
 
 let CreateRoom = (options) => {
-
-    let process = options.process;
     let user_id = options.user_id;
     let user_name = options.user_name;
     let text = options.text;
@@ -30,42 +48,21 @@ let CreateRoom = (options) => {
 
     let command = commandsFabric.createRoom(`${user_name} room`, user_id, user_name);
     command.execute().then((response) => {
-        checkErrorInResponse(response,process,
-            (process,response) => {
-                process.send({
-                    user_id: user_id,
-                    message: `${text} (${response.room_id})`
-                });
-            },
-            onErrorFromServer
+        new CheckError(user_id).checkErrorInResponse(response,
+            (response,user_id) => {
+                sendToUser(user_id,`${text} (${response.room_id})`);
+            }
         );
-    }).catch(err => {
-        logger.error(`module: ${module.id} : ${err}`);
-        process.send({
-            user_id: user_id,
-            message: `MainServer ERROR: ${err}`
-        });
-    });
+    }).catch(getErrorForCatch(user_id));
 };
 
 let DeleteRoom = (options) => {
-    let process = options.process;
     let user_id = options.user_id;
     let text = options.text;
-
-    checkErrorInResponse(response,process,
-        (process,response) => {
-            process.send({
-                user_id: user_id,
-                message: text
-            });
-        },
-        onErrorFromServer
-    );
+    sendToUser(user_id,text);
 };
 
 let SendMessage = (options) => {
-    let process = options.process;
     let user_id = options.user_id;
     let user_name = options.user_name;
     let user_message = options.user_message;
@@ -76,33 +73,19 @@ let SendMessage = (options) => {
     let room_id = req.result.parameters.room_id;
     if(user_message.replace(/\s+/g, '') === "" ||
         room_id.replace(/\s+/g, '') === ""){
-        process.send({
-            user_id: user_id,
-            message: text
-        });
+        sendToUser(user_id,text);
         return;
     }
     let command = commandsFabric.sendMessage(room_id,user_message,user_id,user_name);
     command.execute().then((response) => {
-        checkErrorInResponse(response,process,
-            (process,response) => {
-                process.send({
-                    user_id: user_id,
-                    message: `${text}`
-                });
-            },
-            onErrorFromServer
+        new CheckError(user_id).checkErrorInResponse(response,
+            (response,user_id) => {
+                sendToUser(user_id,text);
+            }
         );
-    }).catch(err => {
-        logger.error(`module: ${module.id} : ${err}`);
-        process.send({
-            user_id: options.user_id,
-            message: `MainServer ERROR: ${err}`
-        });
-    });
+    }).catch(getErrorForCatch(user_id));
 };
 let ConnectedToRoom = (options) => {
-    let process = options.process;
     let user_id = options.user_id;
     let user_name = options.user_name;
     let text = options.text;
@@ -111,34 +94,20 @@ let ConnectedToRoom = (options) => {
 
     let room_id = req.result.parameters.room_id;
     if(room_id.replace(/\s+/g, '') === ""){
-        process.send({
-            user_id: user_id,
-            message: text
-        });
+        sendToUser(user_id,text);
         return;
     }
     let command = commandsFabric.subscribe(room_id,user_id,user_name);
     command.execute().then(response => {
-        checkErrorInResponse(response,process,
-            (process,response) => {
-                process.send({
-                    user_id: user_id,
-                    message: `${text}`
-                });
-            },
-            onErrorFromServer
+        new CheckError(user_id).checkErrorInResponse(response,
+            (response,user_id) => {
+                sendToUser(user_id,text);
+            }
         );
-    }).catch(err => {
-        logger.error(`module: ${module.id} : ${err}`);
-        process.send({
-            user_id: user_id,
-            message: `MainServer ERROR: ${err}`
-        });
-    });
+    }).catch(getErrorForCatch(user_id));
 };
 
 let Unsubscription = (options) => {
-    let process = options.process;
     let user_id = options.user_id;
     let text = options.text;
     let req = options.req;
@@ -146,20 +115,14 @@ let Unsubscription = (options) => {
 
     let unsubscription_id = req.result.parameters.unsubscription_id;
     if(unsubscription_id.replace(/\s+/g, '') === ""){
-        process.send({
-            user_id: user_id,
-            message: text
-        });
+        sendToUser(user_id,text);
         return;
     }
     text = text+"  ("+unsubscription_id+") ";
-    process.send({
-        user_id: user_id,
-        message: text
-    });
+    sendToUser(user_id,text);
 };
+
 let SetPrivilege = (options) => {
-    let process = options.process;
     let user_id = options.user_id;
     let text = options.text;
     let req = options.req;
@@ -167,47 +130,30 @@ let SetPrivilege = (options) => {
 
     let privilage_id = req.result.parameters.privilage_id;
     if(privilage_id.replace(/\s+/g, '') === ""){
-        process.send({
-            user_id: user_id,
-            message: text
-        });
+        sendToUser(user_id,text);
         return;
     }
     text = text+"  ("+privilage_id+") ";
-    process.send({
-        user_id: user_id,
-        message: text
-    });
+    sendToUser(user_id,text);
 };
 
 let RoomListBase = (type,options) => {
-    let process = options.process;
     let user_id = options.user_id;
     let text = options.text;
     let commandsFabric = options.commandsFabric;
 
     let command = commandsFabric.roomsList(type,user_id);
     command.execute().then(response => {
-        checkErrorInResponse(response,process,
-            (process,response) => {
+        new CheckError(user_id).checkErrorInResponse(response,
+            (response,user_id) => {
                 let message = `${text}\n\n`;
                 response.rooms.forEach((room) => {
                     message += `id: ${room.id} Название : ${room.name}\n`;
                 });
-                process.send({
-                    user_id: user_id,
-                    message: message
-                });
-            },
-            onErrorFromServer
+                sendToUser(user_id,message);
+            }
         );
-    }).catch(err => {
-        logger.error(`module: ${module.id} : ${err}`);
-        process.send({
-            user_id: user_id,
-            message: `MainServer ERROR: ${err}`
-        });
-    });
+    }).catch(getErrorForCatch(user_id));
 };
 
 let RoomsListAdmin = (options) => {
@@ -226,22 +172,18 @@ let RoomsListModerator = (options) => {
 
 
 let RoomInfo = (options) => {
-    let process = options.process;
     let user_id = options.user_id;
     let text = options.text;
     let commandsFabric = options.commandsFabric;
 
     let room_id = req.result.parameters.room_id;
     if(room_id.replace(/\s+/g, '') === ""){
-        process.send({
-            user_id: user_id,
-            message: text
-        });
+        sendToUser(user_id,text);
     }
     let command = commandsFabric.roominfo(room_id);
     command.execute().then(response => {
-        checkErrorInResponse(response,process,
-            (process,response) => {
+        new CheckError(user_id).checkErrorInResponse(response,
+            (response,user_id) => {
                 let message = `${text}\n\n`;
                 message += `Название: ${response.room_name}\n`;
                 if(response.admin !== null && response.admin !== undefined){
@@ -259,32 +201,18 @@ let RoomInfo = (options) => {
                         message += `${reader.name} (${reader.type} ${reader.id})\n`;
                     });
                 }
-                process.send({
-                    user_id: user_id,
-                    message: message
-                });
-            },
-            onErrorFromServer
+                sendToUser(user_id,message)
+            }
         );
-    }).catch(err => {
-        logger.error(`module: ${module.id} : ${err}`);
-        process.send({
-            user_id: user_id,
-            message: `MainServer ERROR: ${err}`
-        });
-    });
+    }).catch(getErrorForCatch(user_id));
 };
 
 
 let __Default = (options) => {
-    let process = options.process;
     let user_id = options.user_id;
     let text = options.text;
 
-    process.send({
-        user_id: user_id,
-        message: `${text}`
-    });
+    sendToUser(user_id,text);
 };
 
 
@@ -313,7 +241,7 @@ module.exports = class UserCommandHandler {
         return instance;
     }
 
-    calculate(process,user_id,user_name,req) {
+    calculate(user_id,user_name,req) {
         let user_message = req.result.resolvedQuery;
         let intent_name = req.result.metadata.intentName;
         let text = req.result.fulfillment.speech;
@@ -327,7 +255,6 @@ module.exports = class UserCommandHandler {
             intent_name = "__Default";
         }
         this.intents[intent_name]({
-            process,
             user_id,
             user_name,
             user_message,

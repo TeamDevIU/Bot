@@ -17,7 +17,7 @@ const logger = require('./logger').get();
  */
 function onResponse(user_id,user_name,response) {
     let uch = new UserCommandHandler();
-    uch.calculate(process,user_id,user_name,response);
+    uch.calculate(user_id,user_name,response);
 }
 
 /**
@@ -60,5 +60,5 @@ process.on('message', task => {
     let bindError = (response) => {
         return onErrorMessage(message.user_id,response);
     };
-    handler.execute(1234,bindResponse,bindError);
+    handler.execute(`vk${message.user_id}`,bindResponse,bindError);
 });

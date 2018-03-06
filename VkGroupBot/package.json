@@ -5,7 +5,8 @@
   "main": "./app/main.js",
   "scripts": {
     "test": "mocha",
-    "start": "env CONFIG=../config.json forever -l ./forever.log -o ./out_forever.log -e ./error_forever.log $NODE_DEBUG_OPTION ./app/main.js"
+    "start": "env CONFIG=../config.json forever -l ./forever.log -o ./out_forever.log -e ./error_forever.log $NODE_DEBUG_OPTION ./app/main.js",
+    "debug": "env CONFIG=../config.json node $NODE_DEBUG_OPTION ./app/main.js"
   },
   "author": "",
   "license": "ISC",
