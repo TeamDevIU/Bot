@@ -257,8 +257,8 @@ module.exports = class UserCommandHandler {
         this.intents[intent_name]({
             user_id,
             user_name,
-            user_message,
-            text,
+            user_message: user_message,
+            text: text,
             req,
             commandsFabric: this.commandsFabric
         });
