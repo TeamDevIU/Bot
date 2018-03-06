@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import logging
+from dialog_flow import DialogFlowException
+
 class BaseHandler():
     """Базовый класс обработчика сообщений
 
@@ -18,7 +21,9 @@ class BaseHandler():
         self.message = message
         self.server = server
         self.df = df
+        self.logger = logging.getLogger("TgBot.UserMessageHandler")
         self.handle()
+       
 
     def sendMessage(self, id, text):
         """Метод отправки сообщения пользователю
@@ -34,5 +39,30 @@ class BaseHandler():
         """Метод для обработки сообщения.
             Переопределяется в дочерних классах
         """
+        try:
+            response = self.df.sendMessage(self.message.text)
+        except DialogFlowException as e:
+            self.logger.error("Dialog Flow exception:\n{}".format(e))
+            self.sendMessage(self.message.chat.id,
+                            "Возникли неполадки :(\nПовтори, пожалуйста.")
+        else:
+            self.logger.debug("Intent: {}".format(response['intentName']))
+            if response['intentName'] == None:
+                self.sendMessage(self.message.chat.id, response['speech'])
+            else:
+                    
+                err, isAppend, s = self.server.sendRequest(
+                    response['intentName'],
+                    self.message,
+                    response['parameters']
+                )
+                    
+                if isAppend:
+                    response['speech'] += s
 
-        pass
+                if err:
+                    self.sendMessage(self.message.chat.id, s)
+                else:
+                    self.sendMessage(self.message.chat.id, response['speech'])
+                    
+        

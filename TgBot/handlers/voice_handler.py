@@ -4,7 +4,6 @@ import requests
 from .base_handler import BaseHandler
 from config import API_TOKEN
 from voice_message import SpeechException, voiceToText
-from dialog_flow import DialogFlowException
 
 class VoiceHandler(BaseHandler):
     """Класс обработчика голосовых сообщений
@@ -20,32 +19,10 @@ class VoiceHandler(BaseHandler):
         try:
             text = voiceToText(response.content)
         except SpeechException as e:
-            print(e)
+            self.logger.error("Speech handler exception:\n{}".format(e))
             self.sendMessage(self.message.chat.id, "Я не могу понять, что ты говоришь :(")
         else:
-            try:
-                response = self.df.sendMessage(text)
-            except DialogFlowException as e:
-                print(e)
-                self.sendMessage(self.message.chat.id,
-                                "Возникли неполадки :(\nПовтори, пожалуйста.")
-            else:
-                if response['intentName'] == None:
-                    self.sendMessage(self.message.chat.id, response['speech'])
-                else:
-                    
-                    err, isAppend, s = self.server.sendRequest(
-                        response['intentName'],
-                        self.message,
-                        response['parameters']
-                    )
-                    
-                    if isAppend:
-                        response['speech'] += s
-
-                    if err:
-                        self.sendMessage(self.message.chat.id, s)
-                    else:
-                        self.sendMessage(self.message.chat.id, response['speech']) 
+            self.message.text = text
+            super(VoiceHandler, self).handle()
             
             

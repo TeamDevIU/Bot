@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import requests
-
+import logging
 
 class MainServer():
     """Класс для взаимодействия с главным сервером приложения
@@ -15,6 +15,7 @@ class MainServer():
         """
 
         self.host = host
+        self.logger = logging.getLogger("TgBot.mainServer")
     
 
     def sendRequest(self, intentName, message, parameters):
@@ -29,7 +30,6 @@ class MainServer():
         :return: результат запроса(True/False), 
         признак дополнения сообщения, сообщение
 
-        :raise: 
         """
 
         if intentName == "CreateRoom":
@@ -89,15 +89,17 @@ class MainServer():
         try:
             response = requests.post(url, json=data)
         except BaseException as e:
-            print(e)
+            self.logger.error("Exception in CreateRoom method:\n{}".format(e))
             return True, None, "Не удалось создать комнату :("
 
         res = response.json()
         if res["room_id"] == -1:
-            print(res["error"])
+            self.logger.error("Can't create room.\nError message from server: {}".
+                        format(res["error"]))
             return True, None, "Не удалось создать комнату :("
 
-        
+        self.logger.debug("Response from server main server: {}".format(res))
+
         return False, True, " c id: " + str(res["room_id"])
 
     def getRoomsList(self, message, role):
@@ -120,14 +122,16 @@ class MainServer():
         try:
             response = requests.get(url, params=parameters)
         except BaseException as e:
-            print(e)
+            self.logger.error("Exception in getRoomsList method:\n{}".format(e))
             return True, None, "Не удалось получить список групп :("
 
         res = response.json()
         if res['error'] != "none":
-            print(res["error"])
+            self.logger.error("Can't get rooms list.\nError message from server: {}".
+                        format(res["error"]))
             return True, None, "Не удалось получить список групп :("
 
+        self.logger.debug("Response from main server: {}".format(res))
         rooms = res['rooms']
         text = "\n"
         if len(rooms) == 0:
@@ -164,14 +168,17 @@ class MainServer():
         try:
             response = requests.post(url, json=data)
         except BaseException as e:
-            print(e)
+            self.logger.error("Exception in Subscribe method:\n{}".format(e))
             return True, None, "Не удалось добавить в группу :("
 
         res = response.json()
         if res["error"] != "none":
-            print(res["error"])
+            self.logger.error("Can't subscribe.\nError message from server: {}".
+                        format(res["error"]))
             return True, None, "Не удалось добавить в группу :(\n" + \
                     "Возможно, ты ее админ."
+
+        self.logger.debug("Response from main server: {}".format(res))
 
         return False, False, ""
 
@@ -204,13 +211,16 @@ class MainServer():
         try:
             response = requests.post(url, json=data)
         except BaseException as e:
-            print(e)
+            self.logger.error("Exception in Subscribe method:\n{}".format(e))
             return True, None, "Не удалось отправить сообщение в группу :("
 
         res = response.json()
         if res["error"] != "none":
-            print(res["error"])
+            self.logger.error("Can't send message.\nError message from server: {}".
+                        format(res["error"]))
             return True, None, "Не удалось отправить сообщение в группу :("
+
+        self.logger.debug("Response from main server: {}".format(res))
 
         return False, False, ""
 
@@ -224,6 +234,9 @@ class MainServer():
         признак дополнения сообщения, сооsщение
         """
 
+        if not roomId:
+            return False, False, ""
+            
         url = self.host + "/roomInfo"
         parameters = {
                 "id": int(roomId),
@@ -232,13 +245,16 @@ class MainServer():
         try:
             response = requests.get(url, params=parameters)
         except BaseException as e:
-            print(e)
+            self.logger.error("Exception in getRoomInfo method:\n{}".format(e))
             return True, None, "Не удалось получить информацию о группе :("
 
         res = response.json()
         if res['error'] != "none":
-            print(res["error"])
+            self.logger.error("Can't get room info.\nError message from server: {}".
+                        format(res["error"]))
             return True, None, "Не удалось получить информацию о группе :("
+
+        self.logger.debug("Response from main server: {}".format(res))
 
         text = "\nНазвание комнаты: " + res['room_name']
         text += "\nАдминистратор: " + res['admin']['name'] + " (" + \
