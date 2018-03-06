@@ -119,6 +119,22 @@ func TestAPI(t *testing.T) {
 				"error": "none",
 			},
 		},
+		// Подписка админом
+		Case{
+			Path:   "/subscribe",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_id": 1,
+				"user_info": CR{
+					"id":   1337,
+					"name": "Test Name",
+					"type": "tg",
+				},
+			},
+			Result: CR{
+				"error": "You are admin of this room",
+			},
+		},
 		// Неполное тело запроса
 		Case{
 			Path:   "/subscribe",
