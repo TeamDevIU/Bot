@@ -48,7 +48,8 @@ func TestAPI(t *testing.T) {
 	ts := httptest.NewServer(handler)
 
 	cases := []Case{
-		// Создание комнаты
+		// ========================= Создание комнаты =========================
+		// Нормальное создание
 		Case{
 			Path:   "/createRoom",
 			Method: http.MethodPost,
@@ -65,6 +66,94 @@ func TestAPI(t *testing.T) {
 				"error":   "none",
 			},
 		},
+		// Неправильное тело на создание
+		Case{
+			Path:   "/createRoom",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_name": "test room name",
+				"user_info": CR{
+					"id":   1337,
+					"name": "Test Name",
+					"type": "tg",
+				},
+			},
+			Result: CR{
+				"room_id": -1,
+				"error":   "Bad request body, check api docs",
+			},
+			Status: 400,
+		},
+		// Неправильное тело для парсинга
+		Case{
+			Path:   "/createRoom",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_name": "test room name",
+				"owner_info": CR{
+					"id":   "1337",
+					"name": "Test Name",
+					"type": "tg",
+				},
+			},
+			Result: CR{
+				"room_id": -1,
+				"error":   "json: cannot unmarshal string into Go struct field UserInfo.id of type int",
+			},
+			Status: 400,
+		},
+		// ========================= Подписка на комнату нового юзера =========================
+		// Нормальный запрос
+		Case{
+			Path:   "/subscribe",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_id": 1,
+				"user_info": CR{
+					"id":   100500,
+					"name": "Test Subscriber",
+					"type": "vk",
+				},
+			},
+			Result: CR{
+				"error": "none",
+			},
+		},
+		// Неполное тело запроса
+		Case{
+			Path:   "/subscribe",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_id": 1,
+				"info": CR{
+					"id":   100500,
+					"name": "Test Subscriber",
+					"type": "vk",
+				},
+			},
+			Result: CR{
+				"error": "Bad request body, check api docs",
+			},
+			Status: 400,
+		},
+		// Неправильно заполненное тело
+		Case{
+			Path:   "/subscribe",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_id": 1,
+				"user_info": CR{
+					"id":   "100500",
+					"name": "Test Subscriber",
+					"type": "vk",
+				},
+			},
+			Result: CR{
+				"error": "json: cannot unmarshal string into Go struct field UserInfo.id of type int",
+			},
+			Status: 400,
+		},
+		// ========================= Получение списка комнат =========================
 		// Получение списка администрируемых комнат
 		Case{
 			Path:  "/rooms",

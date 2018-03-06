@@ -118,7 +118,7 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &ErrorResponse{
-			Err: "Bad request body, check api docs",
+			Err: err.Error(),
 		}
 		respBody, _ := json.Marshal(resp)
 		w.WriteHeader(400)
