@@ -14,7 +14,7 @@ module.exports = class HandlerFabric {
                 return new AudioMessageHandler(message);
             }
             default : {
-                logger.error(`module: ${module} : no handler for ${JSON.stringify(message)}`);
+                logger.error(`module: ${module.id} : no handler for ${JSON.stringify(message)}`);
                 throw "no handler";
             }
         }

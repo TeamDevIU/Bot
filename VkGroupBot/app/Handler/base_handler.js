@@ -4,6 +4,7 @@ class BaseHandler{
 
     execute(sessionId){
         if(typeof sessionId !== 'number'){
+            logger.error(`module: ${module.id} : is not a number`);
             throw 'is not a number';
         }
         this.sessionId = sessionId;
