@@ -81,7 +81,12 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing get-room query: " + err.Error())
 		w.WriteHeader(400)
-		w.Write([]byte(err.Error()))
+		resp := &GetRoomsResponse{
+			Rooms: nil,
+			Err:   err.Error(),
+		}
+		respBody, _ := json.Marshal(resp)
+		w.Write(respBody)
 		return
 	}
 
@@ -162,7 +167,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &ErrorResponse{
-			Err: "Bad request body, check api docs",
+			Err: err.Error(),
 		}
 		respBody, _ := json.Marshal(resp)
 		w.WriteHeader(400)
@@ -222,6 +227,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 			Err: "You have no rights for sending message to this room",
 		}
 		respBody, _ := json.Marshal(resp)
+		w.WriteHeader(400)
 		w.Write(respBody)
 	}
 }

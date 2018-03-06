@@ -168,6 +168,142 @@ func TestAPI(t *testing.T) {
 				"error": "none",
 			},
 		},
+		// Получение списка читаемых комнат
+		Case{
+			Path:  "/rooms",
+			Query: "role=reader&userID=100500&botType=vk",
+			Result: CR{
+				"rooms": []CR{
+					CR{
+						"id":   1,
+						"name": "test room name",
+					},
+				},
+				"error": "none",
+			},
+		},
+		// Получение списка комнат с неправильным форматом запроса
+		Case{
+			Path:  "/rooms",
+			Query: "role=admin&userID=lEEt&botType=tg",
+			Result: CR{
+				"rooms": nil,
+				"error": "strconv.Atoi: parsing \"lEEt\": invalid syntax",
+			},
+			Status: 400,
+		},
+		// ========================= Отправка сообщений =========================
+		// Нормальая отправка сообщений
+		Case{
+			Path:   "/sendMessage",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_id": 1,
+				"message": "test message",
+				"sender_info": CR{
+					"id":   1337,
+					"name": "Test Name",
+					"type": "tg",
+				},
+			},
+			Result: CR{
+				"error": "none",
+			},
+		},
+		// Отправка сообщения читателем
+		Case{
+			Path:   "/sendMessage",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_id": 1,
+				"message": "test message",
+				"sender_info": CR{
+					"id":   100500,
+					"name": "Test Subscriber",
+					"type": "vk",
+				},
+			},
+			Result: CR{
+				"error": "You have no rights for sending message to this room",
+			},
+			Status: 400,
+		},
+		// Неправильное тело запроса
+		Case{
+			Path:   "/sendMessage",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_id": "1",
+				"message": "test message",
+				"sender_info": CR{
+					"id":   1337,
+					"name": "Test Name",
+					"type": "tg",
+				},
+			},
+			Result: CR{
+				"error": "json: cannot unmarshal string into Go struct field SendMessage.room_id of type int",
+			},
+			Status: 400,
+		},
+		// Неполное тело
+		Case{
+			Path:   "/sendMessage",
+			Method: http.MethodPost,
+			Body: CR{
+				"room_id": 1,
+				"message": nil,
+				"sender_info": CR{
+					"id":   1337,
+					"name": "Test Name",
+					"type": "tg",
+				},
+			},
+			Result: CR{
+				"error": "Bad request body, check api docs",
+			},
+			Status: 400,
+		},
+		// ========================= Получение подробной информации о комнате =========================
+		// Стандартная информация
+		Case{
+			Path:  "/roomInfo",
+			Query: "id=1",
+			Result: CR{
+				"room_name": "test room name",
+				"admin": CR{
+					"id":   1337,
+					"name": "Test Name",
+					"type": "tg",
+				},
+				"moderators": nil,
+				"reader": []CR{
+					CR{
+						"id":   100500,
+						"name": "Test Subscriber",
+						"type": "vk",
+					},
+				},
+				"error": "none",
+			},
+		},
+		// Некорректный запрос
+		Case{
+			Path:  "/roomInfo",
+			Query: "id=sas",
+			Result: CR{
+				"room_name": "",
+				"admin": CR{
+					"id":   0,
+					"name": "",
+					"type": "",
+				},
+				"moderators": nil,
+				"reader":     nil,
+				"error":      "strconv.Atoi: parsing \"sas\": invalid syntax",
+			},
+			Status: 400,
+		},
 	}
 
 	for idx, item := range cases {
