@@ -1,3 +1,4 @@
+const rp = require('request-promise');
 module.exports = class BaseCommand {
     constructor(options){
         this.uri = 'http://';
@@ -21,6 +22,17 @@ module.exports = class BaseCommand {
     }
 
     execute(){
-        throw 'command not execute';
+        let req = {};
+        if(this.uri){
+            req.uri = this.uri;
+        }
+        if(this.method){
+            req.method = this.method;
+        }
+        if(this.body){
+            req.body = this.body;
+        }
+        req.json = true;
+        return rp(req);
     }
 };
