@@ -1,9 +1,11 @@
+const logger = require('../logger').get();
+
 class BaseHandler{
     constructor(){
     }
 
     execute(sessionId){
-        if(typeof sessionId !== 'number'){
+        if(typeof sessionId !== 'string'){
             logger.error(`module: ${module.id} : is not a number`);
             throw 'is not a number';
         }
