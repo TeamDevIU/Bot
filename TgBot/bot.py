@@ -40,7 +40,6 @@ async def handleTg(request):
     """
     if request.match_info.get('token') == bot.token:
         requestBodyDict = await request.json()
-        logger.info("Request from Telegram Server:\n{}".format(requestBodyDict))
         update = telebot.types.Update.de_json(requestBodyDict)
         bot.process_new_updates([update])
         return web.Response()
@@ -99,13 +98,24 @@ def answer(message):
     :param message: сообщение пользователя
 
     """
-
+    
     try:
         ct = message.content_type
         if ct == 'voice':
+            logger.info("Request from Telegram Server:\nuser_id: {0}\tusername: {1}\tvoice_file_id: {2}".
+                    format(
+                            message.from_user.id, 
+                            message.from_user.username,
+                            message.voice.file_id))
             VoiceHandler(bot, message, server, df)
         else:
+            logger.info("Request from Telegram Server:\nuser_id: {0}\tusername: {1}\ttext: {2}".
+                    format(
+                            message.from_user.id, 
+                            message.from_user.username,
+                            message.text))
             TextHandler(bot, message, server, df)
+            
     except telebot.apihelper.ApiException as e:
         logger.error("Telegram API exception:\n{}".format(e))
         bot.send_message(message.chat.id, "Повтори, пожалуйста.")
