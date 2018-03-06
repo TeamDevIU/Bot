@@ -3,6 +3,23 @@ const logger = require('../logger').get();
 const CONFIG = require(`../${process.env.CONFIG}`);
 let instance;
 
+let onErrorFromServer = (process,response) => {
+    logger.info(`module: ${module.id} MainServer error: ${response.error}`);
+    process.send({
+        user_id: user_id,
+        message: `Запрос не выполнен :( \n( ${response.error} )`
+    });
+};
+
+let checkErrorInResponse = (response,process,onError,onNoError) => {
+  if(response.error === 'none'){
+      onError(process,response);
+  } else {
+      onNoError(process,response);
+  }
+};
+
+
 let CreateRoom = (options) => {
 
     let process = options.process;
@@ -13,12 +30,17 @@ let CreateRoom = (options) => {
 
     let command = commandsFabric.createRoom(`${user_name} room`, user_id, user_name);
     command.execute().then((response) => {
-        process.send({
-            user_id: user_id,
-            message: `${text} (${response.room_id})`
-        });
+        checkErrorInResponse(response,process,
+            (process,response) => {
+                process.send({
+                    user_id: user_id,
+                    message: `${text} (${response.room_id})`
+                });
+            },
+            onErrorFromServer
+        );
     }).catch(err => {
-        logger.error(`module: ${module} : ${err}`);
+        logger.error(`module: ${module.id} : ${err}`);
         process.send({
             user_id: user_id,
             message: `MainServer ERROR: ${err}`
@@ -31,10 +53,15 @@ let DeleteRoom = (options) => {
     let user_id = options.user_id;
     let text = options.text;
 
-    process.send({
-        user_id: user_id,
-        message: text
-    });
+    checkErrorInResponse(response,process,
+        (process,response) => {
+            process.send({
+                user_id: user_id,
+                message: text
+            });
+        },
+        onErrorFromServer
+    );
 };
 
 let SendMessage = (options) => {
@@ -57,12 +84,17 @@ let SendMessage = (options) => {
     }
     let command = commandsFabric.sendMessage(room_id,user_message,user_id,user_name);
     command.execute().then((response) => {
-        process.send({
-            user_id: user_id,
-            message: `${text}`
-        });
+        checkErrorInResponse(response,process,
+            (process,response) => {
+                process.send({
+                    user_id: user_id,
+                    message: `${text}`
+                });
+            },
+            onErrorFromServer
+        );
     }).catch(err => {
-        logger.error(`module: ${module} : ${err}`);
+        logger.error(`module: ${module.id} : ${err}`);
         process.send({
             user_id: options.user_id,
             message: `MainServer ERROR: ${err}`
@@ -87,12 +119,17 @@ let ConnectedToRoom = (options) => {
     }
     let command = commandsFabric.subscribe(room_id,user_id,user_name);
     command.execute().then(response => {
-        process.send({
-            user_id: user_id,
-            message: `${text}`
-        });
+        checkErrorInResponse(response,process,
+            (process,response) => {
+                process.send({
+                    user_id: user_id,
+                    message: `${text}`
+                });
+            },
+            onErrorFromServer
+        );
     }).catch(err => {
-        logger.error(`module: ${module} : ${err}`);
+        logger.error(`module: ${module.id} : ${err}`);
         process.send({
             user_id: user_id,
             message: `MainServer ERROR: ${err}`
@@ -143,81 +180,48 @@ let SetPrivilege = (options) => {
     });
 };
 
-let RoomsListAdmin = (options) => {
+let RoomListBase = (type,options) => {
     let process = options.process;
     let user_id = options.user_id;
     let text = options.text;
     let commandsFabric = options.commandsFabric;
 
-    let command = commandsFabric.roomsList("admin",user_id);
+    let command = commandsFabric.roomsList(type,user_id);
     command.execute().then(response => {
-        let message = `${text}\n\n`;
-        response.rooms.forEach((room) => {
-            message += `id: ${room.id} Название : ${room.name}\n`;
-        });
-        process.send({
-            user_id: user_id,
-            message: message
-        });
+        checkErrorInResponse(response,process,
+            (process,response) => {
+                let message = `${text}\n\n`;
+                response.rooms.forEach((room) => {
+                    message += `id: ${room.id} Название : ${room.name}\n`;
+                });
+                process.send({
+                    user_id: user_id,
+                    message: message
+                });
+            },
+            onErrorFromServer
+        );
     }).catch(err => {
-        logger.error(`module: ${module} : ${err}`);
+        logger.error(`module: ${module.id} : ${err}`);
         process.send({
             user_id: user_id,
             message: `MainServer ERROR: ${err}`
         });
     });
+};
+
+let RoomsListAdmin = (options) => {
+    RoomListBase("admin",options);
 };
 
 
 let RoomsListReader = (options) => {
-    let process = options.process;
-    let user_id = options.user_id;
-    let text = options.text;
-    let commandsFabric = options.commandsFabric;
-
-    let command = commandsFabric.roomsList("reader",user_id);
-    command.execute().then(response => {
-        let message = `${text}\n\n`;
-        response.rooms.forEach((room) => {
-            message += `id: ${room.id} Название : ${room.name}\n`;
-        });
-        process.send({
-            user_id: user_id,
-            message: message
-        });
-    }).catch(err => {
-        logger.error(`module: ${module} : ${err}`);
-        process.send({
-            user_id: user_id,
-            message: `MainServer ERROR: ${err}`
-        });
-    });
+    RoomListBase("reader",options);
 };
 
 
 let RoomsListModerator = (options) => {
-    let process = options.process;
-    let user_id = options.user_id;
-    let text = options.text;
-    let commandsFabric = options.commandsFabric;
-
-    let command = commandsFabric.roomsList("moderator",user_id);
-    command.execute().then(response => {
-        let message = `${text}\n\n`;
-        response.rooms.forEach((room) => {
-            message += `id: ${room.id} Название : ${room.name}\n`;
-        });
-        process.send({
-            user_id: user_id,
-            message: message
-        });
-    }).catch(err => {
-        logger.error(`module: ${module} : ${err}`);
-        process.send({
-            user_id: user_id,
-            message: `MainServer ERROR: ${err}`
-        });
-    });
+    RoomListBase("moderator",options);
 };
 
 
@@ -236,29 +240,34 @@ let RoomInfo = (options) => {
     }
     let command = commandsFabric.roominfo(room_id);
     command.execute().then(response => {
-        let message = `${text}\n\n`;
-        message += `Название: ${response.room_name}\n`;
-        if(response.admin !== null && response.admin !== undefined){
-            message += `Администратор: ${response.admin.name} (${response.admin.type} ${response.admin.id})\n`;
-        }
-        if(response.moderators !== null && response.moderators !== undefined){
-            message += 'Модераторы:\n';
-            response.moderators.forEach((moderator) => {
-                message += `${moderator.name} (${moderator.type} ${moderator.id})\n`;
-            });
-        }
-        if(response.reader !== null && response.reader !== undefined){
-            message += 'Подписчики:\n';
-            response.reader.forEach((reader) => {
-                message += `${reader.name} (${reader.type} ${reader.id})\n`;
-            });
-        }
-        process.send({
-            user_id: user_id,
-            message: message
-        });
+        checkErrorInResponse(response,process,
+            (process,response) => {
+                let message = `${text}\n\n`;
+                message += `Название: ${response.room_name}\n`;
+                if(response.admin !== null && response.admin !== undefined){
+                    message += `Администратор: ${response.admin.name} (${response.admin.type} ${response.admin.id})\n`;
+                }
+                if(response.moderators !== null && response.moderators !== undefined){
+                    message += 'Модераторы:\n';
+                    response.moderators.forEach((moderator) => {
+                        message += `${moderator.name} (${moderator.type} ${moderator.id})\n`;
+                    });
+                }
+                if(response.reader !== null && response.reader !== undefined){
+                    message += 'Подписчики:\n';
+                    response.reader.forEach((reader) => {
+                        message += `${reader.name} (${reader.type} ${reader.id})\n`;
+                    });
+                }
+                process.send({
+                    user_id: user_id,
+                    message: message
+                });
+            },
+            onErrorFromServer
+        );
     }).catch(err => {
-        logger.error(`module: ${module} : ${err}`);
+        logger.error(`module: ${module.id} : ${err}`);
         process.send({
             user_id: user_id,
             message: `MainServer ERROR: ${err}`

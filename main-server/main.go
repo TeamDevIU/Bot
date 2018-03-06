@@ -267,7 +267,7 @@ func ServeMainServer() (http.Handler, error) {
 }
 
 func main() {
-	f, err := os.OpenFile("MainServer.log", os.O_WRONLY|os.O_CREATE, 0755)
+	f, err := os.OpenFile("MainServer.log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
