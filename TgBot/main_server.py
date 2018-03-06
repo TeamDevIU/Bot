@@ -98,7 +98,7 @@ class MainServer():
                         format(res["error"]))
             return True, None, "Не удалось создать комнату :("
 
-        self.logger.debug("Response from server main server: {}".format(res))
+        self.logger.debug("Response from main server:\n{}".format(res))
 
         return False, True, " c id: " + str(res["room_id"])
 
@@ -131,7 +131,7 @@ class MainServer():
                         format(res["error"]))
             return True, None, "Не удалось получить список групп :("
 
-        self.logger.debug("Response from main server: {}".format(res))
+        self.logger.debug("Response from main server:\n{}".format(res))
         rooms = res['rooms']
         text = "\n"
         if len(rooms) == 0:
@@ -178,7 +178,7 @@ class MainServer():
             return True, None, "Не удалось добавить в группу :(\n" + \
                     "Возможно, ты ее админ."
 
-        self.logger.debug("Response from main server: {}".format(res))
+        self.logger.debug("Response from main server:\n{}".format(res))
 
         return False, False, ""
 
@@ -220,7 +220,7 @@ class MainServer():
                         format(res["error"]))
             return True, None, "Не удалось отправить сообщение в группу :("
 
-        self.logger.debug("Response from main server: {}".format(res))
+        self.logger.debug("Response from main server:\n{}".format(res))
 
         return False, False, ""
 
@@ -254,7 +254,7 @@ class MainServer():
                         format(res["error"]))
             return True, None, "Не удалось получить информацию о группе :("
 
-        self.logger.debug("Response from main server: {}".format(res))
+        self.logger.debug("Response from main server:\n{}".format(res))
 
         text = "\nНазвание комнаты: " + res['room_name']
         text += "\nАдминистратор: " + res['admin']['name'] + " (" + \
