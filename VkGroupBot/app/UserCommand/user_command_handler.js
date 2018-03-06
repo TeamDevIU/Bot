@@ -65,18 +65,19 @@ let DeleteRoom = (options) => {
 let SendMessage = (options) => {
     let user_id = options.user_id;
     let user_name = options.user_name;
-    let user_message = options.user_message;
     let text = options.text;
     let req = options.req;
     let commandsFabric = options.commandsFabric;
 
+    let message_for_group = req.result.parameters.user_message;
     let room_id = req.result.parameters.room_id;
-    if(user_message.replace(/\s+/g, '') === "" ||
+    if(message_for_group.replace(/\s+/g, '') === "" ||
         room_id.replace(/\s+/g, '') === ""){
         sendToUser(user_id,text);
         return;
     }
-    let command = commandsFabric.sendMessage(room_id,user_message,user_id,user_name);
+
+    let command = commandsFabric.sendMessage(room_id,message_for_group,user_id,user_name);
     command.execute().then((response) => {
         new CheckError(user_id).checkErrorInResponse(response,
             (response,user_id) => {
@@ -242,22 +243,22 @@ module.exports = class UserCommandHandler {
     }
 
     calculate(user_id,user_name,req) {
-        let user_message = req.result.resolvedQuery;
+        let current_user_message = req.result.resolvedQuery;
         let intent_name = req.result.metadata.intentName;
         let text = req.result.fulfillment.speech;
 
-        logger.info(`${user_id}:  from Dialogflow intent:${intent_name}  speech: ${text} user_message: ${user_message}`);
+        logger.info(`${user_id}:  from Dialogflow intent:${intent_name}  speech: ${text} user_message: ${current_user_message}`);
         let result = Object.keys(this.intents).find((item) => {
             return intent_name === item;
         });
         if(result === undefined){
-            logger.info(`SET DEFAULT INTENT FOR ${intent_name}  (speech: ${text} user_message: ${user_message})`);
+            logger.info(`SET DEFAULT INTENT FOR ${intent_name}  (speech: ${text} user_message: ${current_user_message})`);
             intent_name = "__Default";
         }
         this.intents[intent_name]({
             user_id,
             user_name,
-            user_message: user_message,
+            current_user_message: current_user_message,
             text: text,
             req,
             commandsFabric: this.commandsFabric
