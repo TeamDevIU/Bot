@@ -34,7 +34,7 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &CreateRoomResponse{
 			ID:  -1,
-			Err: err.Error(),
+			Err: "Bad values in request body",
 		}
 		respBody, _ := json.Marshal(resp)
 
@@ -81,7 +81,12 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing get-room query: " + err.Error())
 		w.WriteHeader(400)
-		w.Write([]byte(err.Error()))
+		resp := &GetRoomsResponse{
+			Rooms: nil,
+			Err:   "Bad values in request query",
+		}
+		respBody, _ := json.Marshal(resp)
+		w.Write(respBody)
 		return
 	}
 
@@ -118,7 +123,7 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &ErrorResponse{
-			Err: "Bad request body, check api docs",
+			Err: "Bad values in request body",
 		}
 		respBody, _ := json.Marshal(resp)
 		w.WriteHeader(400)
@@ -162,7 +167,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing request body: " + err.Error())
 		resp := &ErrorResponse{
-			Err: "Bad request body, check api docs",
+			Err: "Bad values in request body",
 		}
 		respBody, _ := json.Marshal(resp)
 		w.WriteHeader(400)
@@ -222,6 +227,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 			Err: "You have no rights for sending message to this room",
 		}
 		respBody, _ := json.Marshal(resp)
+		w.WriteHeader(400)
 		w.Write(respBody)
 	}
 }
@@ -232,7 +238,7 @@ func handleGetFullRoomInfo(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		Logger.Print("error while parsing get-full-room-info query: " + err.Error())
 		resp := GetFullRoomInfoResponse{
-			Err: err.Error(),
+			Err: "Bad values in request query",
 		}
 		respBody, _ := json.Marshal(resp)
 		w.WriteHeader(400)
@@ -267,7 +273,7 @@ func ServeMainServer() (http.Handler, error) {
 }
 
 func main() {
-	f, err := os.OpenFile("MainServer.log", os.O_WRONLY|os.O_CREATE, 0755)
+	f, err := os.OpenFile("MainServer.log", os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0755)
 	if err != nil {
 		log.Fatal(err)
 	}

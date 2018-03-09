@@ -1,8 +1,4 @@
-const CreateRoomCommand = require('./create_room_command');
-const RoomsListCommand = require('./rooms_list_command');
-const SubscribeCommand = require('./subscribe_command');
-const SendMessageCommand = require('./send_message_command');
-const RoomInfoCommand = require('./roominfo_command');
+const BaseCommand = require('./base_command');
 module.exports = class CommandFabric {
     constructor(options){
         this.host = options.host;
@@ -12,7 +8,7 @@ module.exports = class CommandFabric {
     }
 
     createRoom(room_name, user_id, user_name){
-        let command = new CreateRoomCommand({
+        return new BaseCommand({
             host: this.host,
             port: this.port,
             path: '/createRoom',
@@ -26,11 +22,10 @@ module.exports = class CommandFabric {
                 }
             }
         });
-        return command;
     }
 
     roomsList(role, user_id){
-        let command = new RoomsListCommand({
+        return new BaseCommand({
             host: this.host,
             port: this.port,
             method: 'GET',
@@ -41,11 +36,10 @@ module.exports = class CommandFabric {
                 botType: 'vk'
             }
         });
-        return command;
     }
 
     subscribe(room_id,user_id,user_name){
-        let command = new SubscribeCommand({
+        return new BaseCommand({
             host: this.host,
             port: this.port,
             method: 'POST',
@@ -59,11 +53,10 @@ module.exports = class CommandFabric {
                 }
             }
         });
-        return command;
     }
 
     sendMessage(room_id, message, user_id, user_name){
-        let command = new SendMessageCommand({
+        return new BaseCommand({
             host: this.host,
             port: this.port,
             method: 'POST',
@@ -78,11 +71,10 @@ module.exports = class CommandFabric {
                 }
             }
         });
-        return command;
     }
 
     roominfo(room_id){
-        let command = new RoomInfoCommand({
+        return new BaseCommand({
             host: this.host,
             port: this.port,
             method: 'GET',
@@ -91,6 +83,5 @@ module.exports = class CommandFabric {
                 id: Number.parseInt(room_id)
             }
         });
-        return command;
     }
 };
