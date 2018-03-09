@@ -17,6 +17,7 @@ from handlers.text_handler import TextHandler
 from handlers.voice_handler import VoiceHandler
 from dialog_flow import DialogFlow
 from main_server import MainServer
+import ssl
 
 
 WEBHOOK_URL_BASE = "https://{}".format(WEBHOOK_HOST)
@@ -38,6 +39,7 @@ async def handleTg(request):
     :param request: объект-запрос
 
     """
+    
     if request.match_info.get('token') == bot.token:
         requestBodyDict = await request.json()
         update = telebot.types.Update.de_json(requestBodyDict)
@@ -122,11 +124,19 @@ def answer(message):
     
 
 bot.remove_webhook()
-bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH)
+bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH,
+                certificate=open(WEBHOOK_SSL_CERT, 'r'))
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_cert_chain(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV)
+
+
 logger.info("\*/\*/\*/\*/\*/ START BOT \*/\*/\*/\*/\*/\*/")
 
 web.run_app(
     app,
     host=WEBHOOK_LISTEN,
     port=WEBHOOK_PORT,
+    access_log=logger,
+    ssl_context=context,
 )
