@@ -15,7 +15,7 @@ class DialogFlow():
 
         self.ai = apiai.ApiAI(token)
     
-    def sendMessage(self, text):
+    def sendMessage(self, text, sessionId):
         """Метод отправки сообщения в Dialog Flow
         
         :param text: текст отправляемого сообщения
@@ -27,6 +27,7 @@ class DialogFlow():
         :raise: DialogFlowException
         """
 
+        self.ai.session_id = "tg" + str(sessionId)
         request = self.ai.text_request()
         request.query = text
 
@@ -42,16 +43,16 @@ class DialogFlow():
                         response['status']['errorType'] 
                     ))
             else:
-                
-                
                 speech = response['result']['fulfillment']['speech']
                 intentName = response.get('result').get('metadata').get('intentName', None)
                 parameters = response['result']['parameters']
+                sessionId = response['sessionId']
 
                 return {
                     "speech": speech,
                     "intentName": intentName,
-                    "parameters": parameters
+                    "parameters": parameters,
+                    "sessionId": sessionId
                 }
                
         
