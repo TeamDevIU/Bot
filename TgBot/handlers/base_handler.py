@@ -32,7 +32,11 @@ class BaseHandler():
         :param text: текст сообщения
 
         """
-        self.bot.send_message(id, text)
+        self.logger.debug("SENDING MESSAGE TO TELEGRAM: {}".format(text))
+        try:
+            self.bot.send_message(id, text)
+        except BaseException as e:
+            self.logger.error("Exception of telegram api: {}".format(e))
     
 
     def handle(self):
