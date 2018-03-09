@@ -176,6 +176,7 @@ let RoomInfo = (options) => {
     let user_id = options.user_id;
     let text = options.text;
     let commandsFabric = options.commandsFabric;
+    let req = options.req;
 
     let room_id = req.result.parameters.room_id;
     if(room_id.replace(/\s+/g, '') === ""){
