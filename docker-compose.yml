@@ -19,7 +19,7 @@ services:
     volumes:
       - ./TgBot:/usr/app/
     ports:
-      - "8002:8002"
+      - "8443:8443"
 
   mainserver:
     build:
