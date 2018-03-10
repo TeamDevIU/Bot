@@ -53,6 +53,7 @@ let CreateRoom = (options) => {
                 sendToUser(user_id,`${text} (${response.room_id})`);
             }
         );
+        return;
     }).catch(getErrorForCatch(user_id));
 };
 
@@ -84,6 +85,7 @@ let SendMessage = (options) => {
                 sendToUser(user_id,text);
             }
         );
+        return;
     }).catch(getErrorForCatch(user_id));
 };
 let ConnectedToRoom = (options) => {
@@ -105,6 +107,7 @@ let ConnectedToRoom = (options) => {
                 sendToUser(user_id,text);
             }
         );
+        return;
     }).catch(getErrorForCatch(user_id));
 };
 
@@ -154,6 +157,7 @@ let RoomListBase = (type,options) => {
                 sendToUser(user_id,message);
             }
         );
+        return;
     }).catch(getErrorForCatch(user_id));
 };
 
@@ -181,6 +185,7 @@ let RoomInfo = (options) => {
     let room_id = req.result.parameters.room_id;
     if(room_id.replace(/\s+/g, '') === ""){
         sendToUser(user_id,text);
+        return;
     }
     let command = commandsFabric.roominfo(room_id);
     command.execute().then(response => {
@@ -206,6 +211,7 @@ let RoomInfo = (options) => {
                 sendToUser(user_id,message);
             }
         );
+        return;
     }).catch(getErrorForCatch(user_id));
 };
 
