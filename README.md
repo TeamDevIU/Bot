@@ -1,5 +1,8 @@
-# Group alerts bot
 
+
+# Group alerts bot
+travis-ci : [![Build Status](https://travis-ci.org/TeamDevIU/Bot.svg?branch=master)](https://travis-ci.org/TeamDevIU/Bot)
+codebeat : [![codebeat badge](https://codebeat.co/badges/9b474ffc-d480-4ce8-b15c-fa2a1d170a02)](https://codebeat.co/projects/github-com-teamdeviu-bot-development)
 **Group alerts bot** - бот для Telegram и ВКонтакте, позволяющий осуществлять рассылку важных сообщений группе пользователей.
 
 Идея родилась после возникновения вопроса от старосты нашей группы в какой чат отправлять всю инфу. Суть бота: старостой создается "комната", на которую подписываются студенты. Дальше староста может отправлять боту необходимые сообщения, которые в последствии будут отправлены ботом студентам.
