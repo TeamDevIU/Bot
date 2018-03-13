@@ -34,7 +34,7 @@ WEBHOOK_SSL_PRIV=\"$WEBHOOK_SSL_CERT_PRIV\"" > TgBot/config.py;
  echo "go get github.com/gorilla/mux
        go get github.com/lib/pq
        go build
-       ./go -dbhost=10.0.0.4 -dbport=5432 -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=http://$PRIVATE_HOST:8002 -vkbot=http://$PRIVATE_HOST:8000/send_message -port=8080" > main-server/run.sh;
+       ./go -dbhost=10.0.0.4 -dbport=5432 -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=https://teamdev.website/tg/ -vkbot=https://teamdev.website/vk/send_message -port=8080" > main-server/run.sh;
  cat main-server/run.sh;
  sudo docker-compose build --no-cache;
  sudo docker-compose kill;
