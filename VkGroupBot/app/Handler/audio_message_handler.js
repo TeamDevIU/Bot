@@ -24,7 +24,7 @@ module.exports = class AudioMessageHandler extends BaseHandler{
         let df = this.dialogflow;
         let audioUrl = this.audioUrl;
         let onTranslateAudio = (res) => {
-            logger.info(`ya.speach translate ${audioUrl}`);
+            logger.info(`ya.speech translate ${audioUrl}`);
             let req = df.textRequest(res,{
                 sessionId: sessionId
             });
@@ -33,7 +33,7 @@ module.exports = class AudioMessageHandler extends BaseHandler{
             req.end();
         };
         let onErrorTranslateAudio = (err) => {
-            logger.error(`module: ${module} : Ошибка распознования аудио : ${audioUrl}`);
+            logger.error(`module: ${module.id} : Ошибка распознования аудио : ${audioUrl}`);
             errorFunc("Ошибка распознования аудио, " + err);
         };
 
@@ -42,7 +42,7 @@ module.exports = class AudioMessageHandler extends BaseHandler{
             res.pipe(speechTranslator.translate(onTranslateAudio, onErrorTranslateAudio));
         };
         let onErrorDownloadAudio = (e) => {
-            logger.error(`module: ${module} :Ошибка получения аудио : ${audioUrl}`);
+            logger.error(`module: ${module.id} :Ошибка получения аудио : ${audioUrl}`);
             errorFunc("Ошибка получения аудио" + e);
         };
         let request = https.get(this.audioUrl,onDownloadAudio).on('error', onErrorDownloadAudio);

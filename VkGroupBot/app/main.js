@@ -5,6 +5,7 @@ const logger = require('./logger').get();
 const CONFIG = require(process.env.CONFIG);
 
 logger.info("RUN VKBOT");
+logger.error("RUN VKBOT");
 let Bot = new VkBot(CONFIG.VKTOKEN, {
     webhook: {
         url: CONFIG.URL,
@@ -14,7 +15,7 @@ let Bot = new VkBot(CONFIG.VKTOKEN, {
     method: 'post',
     path: '/send_message',
     callback: (request,response) => {
-        logger.info(`from MainServer: ${JSON.stringify(request)}`);
+        logger.info(`from MainServer: ${JSON.stringify(request.body)}`);
         let user_id = request.body.user_id;
         let message = request.body.message;
 

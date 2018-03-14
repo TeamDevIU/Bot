@@ -17,6 +17,7 @@ from handlers.text_handler import TextHandler
 from handlers.voice_handler import VoiceHandler
 from dialog_flow import DialogFlow
 from main_server import MainServer
+import ssl
 
 
 WEBHOOK_URL_BASE = "https://{}".format(WEBHOOK_HOST)
@@ -38,9 +39,9 @@ async def handleTg(request):
     :param request: объект-запрос
 
     """
+    
     if request.match_info.get('token') == bot.token:
         requestBodyDict = await request.json()
-        logger.info("Request from Telegram Server:\n{}".format(requestBodyDict))
         update = telebot.types.Update.de_json(requestBodyDict)
         bot.process_new_updates([update])
         return web.Response()
@@ -99,24 +100,43 @@ def answer(message):
     :param message: сообщение пользователя
 
     """
-
+    
     try:
         ct = message.content_type
         if ct == 'voice':
+            logger.info("Request from Telegram Server:\nuser_id: {0}\tusername: {1}\tvoice_file_id: {2}".
+                    format(
+                            message.from_user.id, 
+                            message.from_user.username,
+                            message.voice.file_id))
             VoiceHandler(bot, message, server, df)
         else:
+            logger.info("Request from Telegram Server:\nuser_id: {0}\tusername: {1}\ttext: {2}".
+                    format(
+                            message.from_user.id, 
+                            message.from_user.username,
+                            message.text))
             TextHandler(bot, message, server, df)
+            
     except telebot.apihelper.ApiException as e:
         logger.error("Telegram API exception:\n{}".format(e))
         bot.send_message(message.chat.id, "Повтори, пожалуйста.")
     
 
 bot.remove_webhook()
-bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH)
+bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH,
+                certificate=open(WEBHOOK_SSL_CERT, 'r'))
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+context.load_cert_chain(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV)
+
+
 logger.info("\*/\*/\*/\*/\*/ START BOT \*/\*/\*/\*/\*/\*/")
 
 web.run_app(
     app,
     host=WEBHOOK_LISTEN,
     port=WEBHOOK_PORT,
+    access_log=logger,
+    ssl_context=context,
 )
