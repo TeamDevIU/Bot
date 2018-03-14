@@ -98,12 +98,6 @@ func TestAPI(t *testing.T) {
 			},
 			Result: CR{
 				"room_id": -1,
-<<<<<<< HEAD
-				"error":   "json: cannot unmarshal string into Go struct field UserInfo.id of type int",
-			},
-			Status: 400,
-		},
-=======
 				"error":   "Bad values in request body",
 			},
 			Status: 400,
@@ -176,7 +170,6 @@ func TestAPI(t *testing.T) {
 			Status: 400,
 		},
 		// ========================= Получение списка комнат =========================
->>>>>>> development
 		// Получение списка администрируемых комнат
 		Case{
 			Path:  "/rooms",
