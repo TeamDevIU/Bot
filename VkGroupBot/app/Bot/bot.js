@@ -39,6 +39,21 @@ class VKRequestHandlerAll{
         return true;
     }
 
+    _eventCallbackExecute(){
+        let stack = this.vkbot.EventCallbackRegistry;
+        if (stack.length > 0) {
+            let index = 0;
+            let notify = () => {
+                if (index >= stack.length)
+                    return;
+                stack[index](json, () => {
+                    index++;
+                    notify();
+                });
+            };
+            notify();
+        }
+    }
 
     handle(request,response){
         try {
@@ -54,19 +69,7 @@ class VKRequestHandlerAll{
             if (json.type === 'message_new' || json.type === 'message_reply')
                 this.vkbot.pushMessage(json.object);
 
-            let stack = this.vkbot.EventCallbackRegistry;
-            if (stack.length > 0) {
-                let index = 0;
-                let notify = () => {
-                    if (index >= stack.length)
-                        return;
-                    stack[index](json, () => {
-                        index++;
-                        notify();
-                    });
-                };
-                notify();
-            }
+            this._eventCallbackExecute();
             response.status(200).send('ok');
         } catch(e) {
             response.status(200).send('error');
