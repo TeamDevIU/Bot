@@ -16,8 +16,12 @@ module.exports = class TasksDistributor{
             throw "workers not init";
         }
 
-        this.workers = workers;
         this.size = Object.keys(workers).length;
+        if(this.size === 0){
+            logger.error(`module: ${module} : workers empty`);
+            throw "workers is empty";
+        }
+        this.workers = workers;
         this.i = 0;
     }
 
@@ -27,7 +31,7 @@ module.exports = class TasksDistributor{
      * @param task
      */
     execute(task){
-        this.workers[((++this.i) % this.size) +1].send(task);
+        this.workers[((this.i++) % this.size) +1].send(task);
     }
 
     /**
