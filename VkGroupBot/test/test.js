@@ -34,29 +34,30 @@ describe("vkBot test", () => {
         });
 
         describe("execute", () => {
-            let funcs = {
-                1: {
-                    savevalue: undefined,
-                    savefunc: (task) => {
-                        funcs["1"].savevalue = task;
-                    }
-                },
-                2: {
-                    savevalue: undefined,
-                    savefunc: (task) => {
-                        funcs["2"].savevalue = task;
-                    }
-                }
-            };
-            let td = new TaskDistributor({
-                1: {
-                    send: funcs["1"].savefunc,
-                },
-                2: {
-                    send: funcs["2"].savefunc,
-                }
-            });
             it("проверка распределения задач", () => {
+                let funcs = {
+                    1: {
+                        savevalue: undefined,
+                        savefunc: (task) => {
+                            funcs["1"].savevalue = task;
+                        }
+                    },
+                    2: {
+                        savevalue: undefined,
+                        savefunc: (task) => {
+                            funcs["2"].savevalue = task;
+                        }
+                    }
+                };
+                let td = new TaskDistributor({
+                    1: {
+                        send: funcs["1"].savefunc,
+                    },
+                    2: {
+                        send: funcs["2"].savefunc,
+                    }
+                });
+
                 td.execute("1 задача");
                 td.execute("2 задача");
 
@@ -72,5 +73,6 @@ describe("vkBot test", () => {
                 })
             })
         });
+
     });
 });
