@@ -7,6 +7,30 @@ let sendToUser = (user_id,message) => {
     process.send({user_id,message});
 };
 
+let haveAdmin = (message,response) => {
+    if(response.admin !== null && response.admin !== undefined){
+        message += `Администратор: ${response.admin.name} (${response.admin.type} ${response.admin.id})\n`;
+    }
+};
+
+let haveModerators = (message, response) => {
+    if(response.moderators !== null && response.moderators !== undefined){
+        message += 'Модераторы:\n';
+        response.moderators.forEach((moderator) => {
+            message += `${moderator.name} (${moderator.type} ${moderator.id})\n`;
+        });
+    }
+};
+
+let haveReaders = (message,response) => {
+    if(response.reader !== null && response.reader !== undefined){
+        message += 'Подписчики:\n';
+        response.reader.forEach((reader) => {
+            message += `${reader.name} (${reader.type} ${reader.id})\n`;
+        });
+    }
+};
+
 let onErrorFromServer = (type,error,user_id) => {
     if(type !== 'info' && type !== 'error'){
         logger.error(`module: ${module.id} Type of logger: ${type}`);
@@ -174,30 +198,6 @@ let RoomsListModerator = (options) => {
 
 
 let RoomInfo = (options) => {
-    let haveAdmin = (message,response) => {
-        if(response.admin !== null && response.admin !== undefined){
-            message += `Администратор: ${response.admin.name} (${response.admin.type} ${response.admin.id})\n`;
-        }
-    };
-
-    let haveModerators = (message, response) => {
-        if(response.moderators !== null && response.moderators !== undefined){
-            message += 'Модераторы:\n';
-            response.moderators.forEach((moderator) => {
-                message += `${moderator.name} (${moderator.type} ${moderator.id})\n`;
-            });
-        }
-    };
-
-    let haveReaders = (message,response) => {
-        if(response.reader !== null && response.reader !== undefined){
-            message += 'Подписчики:\n';
-            response.reader.forEach((reader) => {
-                message += `${reader.name} (${reader.type} ${reader.id})\n`;
-            });
-        }
-    };
-
     let user_id = options.user_id;
     let text = options.text;
     let commandsFabric = options.commandsFabric;
