@@ -2,11 +2,11 @@ language: generic
 
 stages:
   - name: test_vkbot
-    if: branch = development
+    if: branch IN (development, master)
   - name: test_tgbot
-    if: branch = development
+    if: branch IN (development, master)
   - name: test_mainserver
-    if: branch = development
+    if: branch IN (development, master)
   - name: deploy
     if: branch = master
 
