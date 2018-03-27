@@ -92,13 +92,14 @@ module.exports = class VkBot extends VK.Group{
                 app[handler.method](handler.path,handler.callback);
             });
         }
-        let requestHandler = new VKRequestHandlerAll(self,webhook);
+        let requestHandler = new VKRequestHandlerAll(this,webhook);
         app.all('/',  (req,res) => {
             requestHandler.handle(req,res);
         });
     }
 
-    _startListen(app,webhook){
+    _startListen(app,webhook,confingFile){
+        let self = this;
         app.listen((webhook.port || 80), (err) => {
             if (err) {
                 return console.log('something bad happened', err);
@@ -126,7 +127,7 @@ module.exports = class VkBot extends VK.Group{
         app.use(bodyParser.json());
 
         this._initHandlers(app,webhook);
-        this._startListen(app,webhook);
+        this._startListen(app,webhook,confingFile);
     }
 
 
