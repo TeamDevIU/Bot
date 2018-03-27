@@ -17,7 +17,7 @@ class VKRequestHandlerAll{
             return false;
         }
         return true;
-    };
+    }
 
     _checkConfirmation (request,response){
         if (request.body.type === 'confirmation') {
@@ -27,7 +27,7 @@ class VKRequestHandlerAll{
             return false;
         }
         return true;
-    };
+    }
 
     _checkWebhook (request,response){
         if (this.webhook.config &&
@@ -37,7 +37,7 @@ class VKRequestHandlerAll{
             return false;
         }
         return true;
-    };
+    }
 
 
     handle(request,response){
@@ -91,7 +91,7 @@ module.exports = class VkBot extends VK.Group{
         }
         let requestHandler = new VKRequestHandlerAll(self,webhook);
         app.all('/',  (req,res) => {
-            requestHandler.handle(req,res)
+            requestHandler.handle(req,res);
         });
     }
 
