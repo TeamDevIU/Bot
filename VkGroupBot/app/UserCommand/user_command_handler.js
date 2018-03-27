@@ -20,6 +20,17 @@ let getErrorForCatch = (user_id) => {
   return (err) => onErrorFromServer('error',err,user_id);
 };
 
+let defaultCallBack = (command) => {
+    command.execute().then((response) => {
+        new CheckError(user_id).checkErrorInResponse(response,
+            (response,user_id) => {
+                sendToUser(user_id,text);
+            }
+        );
+        return;
+    }).catch(getErrorForCatch(user_id));
+};
+
 class CheckError {
     constructor(user_id){
         if(user_id === undefined){
@@ -79,14 +90,7 @@ let SendMessage = (options) => {
     }
 
     let command = commandsFabric.sendMessage(room_id,message_for_group,user_id,user_name);
-    command.execute().then((response) => {
-        new CheckError(user_id).checkErrorInResponse(response,
-            (response,user_id) => {
-                sendToUser(user_id,text);
-            }
-        );
-        return;
-    }).catch(getErrorForCatch(user_id));
+    defaultCallBack(command);
 };
 let ConnectedToRoom = (options) => {
     let user_id = options.user_id;
@@ -101,14 +105,7 @@ let ConnectedToRoom = (options) => {
         return;
     }
     let command = commandsFabric.subscribe(room_id,user_id,user_name);
-    command.execute().then(response => {
-        new CheckError(user_id).checkErrorInResponse(response,
-            (response,user_id) => {
-                sendToUser(user_id,text);
-            }
-        );
-        return;
-    }).catch(getErrorForCatch(user_id));
+    defaultCallBack(command);
 };
 
 let Unsubscription = (options) => {
