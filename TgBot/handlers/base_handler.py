@@ -32,7 +32,11 @@ class BaseHandler():
         :param text: текст сообщения
 
         """
-        self.bot.send_message(id, text)
+        self.logger.debug("SENDING MESSAGE TO TELEGRAM: {}".format(text))
+        try:
+            self.bot.send_message(id, text)
+        except BaseException as e:
+            self.logger.error("Exception of telegram api: {}".format(e))
     
 
     def handle(self):
@@ -40,13 +44,20 @@ class BaseHandler():
             Переопределяется в дочерних классах
         """
         try:
-            response = self.df.sendMessage(self.message.text)
+            response = self.df.sendMessage(self.message.text, self.message.chat.id)
         except DialogFlowException as e:
             self.logger.error("Dialog Flow exception:\n{}".format(e))
             self.sendMessage(self.message.chat.id,
                             "Возникли неполадки :(\nПовтори, пожалуйста.")
         else:
-            self.logger.debug("Intent: {}".format(response['intentName']))
+            self.logger.info("Response from Dialog Flow:\n"
+                             "speech: {0}\tintent: {1}\tsession_id: {2}\tparameters: {3}".format(
+                                response['speech'],
+                                response['intentName'],
+                                response['sessionId'],
+                                response['parameters']
+                            ))
+            #self.logger.debug("Intent: {}".format(response['intentName']))
             if response['intentName'] == None:
                 self.sendMessage(self.message.chat.id, response['speech'])
             else:
@@ -64,5 +75,5 @@ class BaseHandler():
                     self.sendMessage(self.message.chat.id, s)
                 else:
                     self.sendMessage(self.message.chat.id, response['speech'])
-                    
+
         

@@ -22,7 +22,8 @@ class TestDialogFlow(unittest.TestCase):
             Сравниваем ответ, сформированный на основе запроса
             к Dialog Flow c ожидаемым
         """
-        messages = ["подключи к комнате 33"] 
+        messages = ["подключи к комнате 33"]
+        sessionId = ["123"] 
         answers = [{
             "speech": "Подключил к группе",
             "intentName": "ConnectedToRoom",
@@ -30,11 +31,12 @@ class TestDialogFlow(unittest.TestCase):
                 "Connected": "Подключи",
                 "Room": "Комната",
                 "room_id": "33"
-            }
+            },
+            "sessionId": "tg123"
         }]
 
         for i in range(len(messages)):
-            answer = self.df.sendMessage(messages[i])
+            answer = self.df.sendMessage(messages[i], sessionId[i])
             with self.subTest():
                 self.assertEqual(answer, answers[i])
         
