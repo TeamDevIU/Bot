@@ -54,6 +54,7 @@ jobs:
           - sudo tar -zxvf  go1.9.3.linux-amd64.tar.gz -C /usr/local/
           - export PATH=$PATH:/usr/local/go/bin
           - export GOPATH=$HOME
+          - export GOROOT=$(go env GOROOT)
           - go version
           - cd main-server
           - go get github.com/gorilla/mux
