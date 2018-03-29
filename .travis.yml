@@ -78,23 +78,15 @@ jobs:
       node_js: 
           - "node"
       script: 
-          - cd ../;
-          - ls -al;
-          - mkdir VKdocs;
-          - cd VKdocs;
+          - cd VkGroupBot;
+          - npm install;
+          - grunt yuidoc;
+          - cd ../../VKdocs;
           - git init;
           - git config --global user.email "travis@travis-ci.org";
           - git config --global user.name "Travis CI";
           - git remote add origin https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/VkBotDocs.git > /dev/null 2>&1;
-          - git fetch;
-          - git pull origin master;
-          - cd ../;
-          - cd Bot/VkGroupBot;
-          - npm install;
-          - grunt yuidoc;
-          - cd ../../;
-          - cd VKdocs;
           - git add . ;
           - git commit -m "Travis build ${TRAVIS_BUILD_NUMBER}";
-          - git push --quiet --set-upstream origin master ;
+          - git push --force --quiet --set-upstream origin master ;
       
