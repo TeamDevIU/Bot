@@ -103,12 +103,14 @@ jobs:
           - sudo python3.6 get-pip.py
           - cd TgBot
           - sudo pip3.6 install -r requirements.txt 
-          - cd ..
+          - cd ..;
       script: 
-          - cd TgBot
+          - cd TgBot;
+          - ls -al;
           - mkdir ../../TGdocs
           - ./docs_gen.sh ../../TGdocs 2&>/dev/null;
           - cd ../../TGdocs;
+          - ls -al;
           - git init;
           - git config --global user.email "travis@travis-ci.org";
           - git config --global user.name "Travis CI";
