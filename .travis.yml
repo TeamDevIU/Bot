@@ -84,8 +84,8 @@ jobs:
           - cd docs;
           - git config --global user.email "travis@travis-ci.org";
           - git config --global user.name "Travis CI";
-          - git remote add origin-pages https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/VkBotDocs.git > /dev/null 2>&1
+          - git remote add origin-pages https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/VkBotDocs.git > /dev/null 2>&1;
           - git add *;
-          - git commit -m "Travis build: $TRAVIS_BUILD_NUMBER";
+          - git commit -m "Travis build: ${TRAVIS_BUILD_NUMBER}";
           - git push --quiet --set-upstream origin master ;
       
