@@ -65,3 +65,4 @@ config.json
 .idea
 combined.log
 error.log
+docs
