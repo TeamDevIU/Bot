@@ -7,6 +7,8 @@ stages:
     if: branch IN (development, master)
   - name: test_mainserver
     if: branch IN (development, master)
+  - name: create_docs_vkbot
+    if: branch = development
   - name: deploy
     if: branch = master
 
@@ -71,4 +73,19 @@ jobs:
           - chmod +x .travis/deploy.sh
       script: 
           - .travis/deploy.sh
-
+    - stage: create_docs_vkbot
+      language: node_js
+      node_js: 
+          - "node"
+      script: 
+          - cd VkGroupBot;
+          - npm install;
+          - grunt yuidoc;
+          - cd docs;
+          - git config --global user.email "travis@travis-ci.org";
+          - git config --global user.name "Travis CI";
+          - git remote add origin-pages https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/VkBotDocs.git > /dev/null 2>&1
+          - git add *;
+          - get commit -m "Travis build: $TRAVIS_BUILD_NUMBER";
+          - git push --quiet --set-upstream origin master ;
+      
