@@ -108,7 +108,7 @@ jobs:
           - cd TgBot;
           - ls -al;
           - mkdir ../../TGdocs
-          - ./docs_gen.sh ../../TGdocs;
+          - ./docs_gen.sh ../../../TGdocs;
           - cd ../../TGdocs;
           - ls -al;
           - git init;
