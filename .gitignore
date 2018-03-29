@@ -5,6 +5,7 @@
 *.dylib
 tgbot_env/
 __pycache__/
+gitflow/
 # Test binary, build with `go test -c`
 *.test
 

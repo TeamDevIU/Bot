@@ -2,11 +2,13 @@ language: generic
 
 stages:
   - name: test_vkbot
-    if: branch = development
+    if: branch IN (development, master)
   - name: test_tgbot
-    if: branch = development
+    if: branch IN (development, master)
   - name: test_mainserver
-    if: branch = development
+    if: branch IN (development, master)
+  - name: create_docs_vkbot
+    if: branch = master
   - name: deploy
     if: branch = master
 
@@ -42,6 +44,9 @@ jobs:
           - cd ..
 
     - stage: test_mainserver
+      language: "go"
+      "go": "1.9.3"
+      sudo: true
       services:
           - postgresql
       addons:
@@ -50,11 +55,6 @@ jobs:
           - psql -c 'create database db_for_test;' -U postgres
           - psql -c "create user test_user with password 'password';" -U postgres
           - psql -c "GRANT ALL ON DATABASE db_for_test TO test_user;" -U postgres
-          - wget https://storage.googleapis.com/golang/go1.9.3.linux-amd64.tar.gz
-          - sudo tar -zxvf  go1.9.3.linux-amd64.tar.gz -C /usr/local/
-          - export PATH=$PATH:/usr/local/go/bin
-          - export GOPATH=$HOME
-          - go version
           - cd main-server
           - go get github.com/gorilla/mux
           - go get github.com/lib/pq
@@ -73,4 +73,20 @@ jobs:
           - chmod +x .travis/deploy.sh
       script: 
           - .travis/deploy.sh
-
+    - stage: create_docs_vkbot
+      language: node_js
+      node_js: 
+          - "node"
+      script: 
+          - cd VkGroupBot;
+          - npm install;
+          - grunt yuidoc;
+          - cd ../../VKdocs;
+          - git init;
+          - git config --global user.email "travis@travis-ci.org";
+          - git config --global user.name "Travis CI";
+          - git remote add origin https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/VkBotDocs.git > /dev/null 2>&1;
+          - git add . ;
+          - git commit -m "Travis build ${TRAVIS_BUILD_NUMBER}";
+          - git push --force --quiet --set-upstream origin master ;
+      

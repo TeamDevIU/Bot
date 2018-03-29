@@ -7,6 +7,30 @@ let sendToUser = (user_id,message) => {
     process.send({user_id,message});
 };
 
+let haveAdmin = (message,response) => {
+    if(response.admin !== null && response.admin !== undefined){
+        message += `Администратор: ${response.admin.name} (${response.admin.type} ${response.admin.id})\n`;
+    }
+};
+
+let haveModerators = (message, response) => {
+    if(response.moderators !== null && response.moderators !== undefined){
+        message += 'Модераторы:\n';
+        response.moderators.forEach((moderator) => {
+            message += `${moderator.name} (${moderator.type} ${moderator.id})\n`;
+        });
+    }
+};
+
+let haveReaders = (message,response) => {
+    if(response.reader !== null && response.reader !== undefined){
+        message += 'Подписчики:\n';
+        response.reader.forEach((reader) => {
+            message += `${reader.name} (${reader.type} ${reader.id})\n`;
+        });
+    }
+};
+
 let onErrorFromServer = (type,error,user_id) => {
     if(type !== 'info' && type !== 'error'){
         logger.error(`module: ${module.id} Type of logger: ${type}`);
@@ -18,6 +42,17 @@ let onErrorFromServer = (type,error,user_id) => {
 
 let getErrorForCatch = (user_id) => {
   return (err) => onErrorFromServer('error',err,user_id);
+};
+
+let defaultCallBack = (command) => {
+    command.execute().then((response) => {
+        new CheckError(user_id).checkErrorInResponse(response,
+            (response,user_id) => {
+                sendToUser(user_id,text);
+            }
+        );
+        return;
+    }).catch(getErrorForCatch(user_id));
 };
 
 class CheckError {
@@ -53,6 +88,7 @@ let CreateRoom = (options) => {
                 sendToUser(user_id,`${text} (${response.room_id})`);
             }
         );
+        return;
     }).catch(getErrorForCatch(user_id));
 };
 
@@ -78,13 +114,7 @@ let SendMessage = (options) => {
     }
 
     let command = commandsFabric.sendMessage(room_id,message_for_group,user_id,user_name);
-    command.execute().then((response) => {
-        new CheckError(user_id).checkErrorInResponse(response,
-            (response,user_id) => {
-                sendToUser(user_id,text);
-            }
-        );
-    }).catch(getErrorForCatch(user_id));
+    defaultCallBack(command);
 };
 let ConnectedToRoom = (options) => {
     let user_id = options.user_id;
@@ -99,13 +129,7 @@ let ConnectedToRoom = (options) => {
         return;
     }
     let command = commandsFabric.subscribe(room_id,user_id,user_name);
-    command.execute().then(response => {
-        new CheckError(user_id).checkErrorInResponse(response,
-            (response,user_id) => {
-                sendToUser(user_id,text);
-            }
-        );
-    }).catch(getErrorForCatch(user_id));
+    defaultCallBack(command);
 };
 
 let Unsubscription = (options) => {
@@ -154,6 +178,7 @@ let RoomListBase = (type,options) => {
                 sendToUser(user_id,message);
             }
         );
+        return;
     }).catch(getErrorForCatch(user_id));
 };
 
@@ -181,6 +206,7 @@ let RoomInfo = (options) => {
     let room_id = req.result.parameters.room_id;
     if(room_id.replace(/\s+/g, '') === ""){
         sendToUser(user_id,text);
+        return;
     }
     let command = commandsFabric.roominfo(room_id);
     command.execute().then(response => {
@@ -188,24 +214,13 @@ let RoomInfo = (options) => {
             (response,user_id) => {
                 let message = `${text}\n\n`;
                 message += `Название: ${response.room_name}\n`;
-                if(response.admin !== null && response.admin !== undefined){
-                    message += `Администратор: ${response.admin.name} (${response.admin.type} ${response.admin.id})\n`;
-                }
-                if(response.moderators !== null && response.moderators !== undefined){
-                    message += 'Модераторы:\n';
-                    response.moderators.forEach((moderator) => {
-                        message += `${moderator.name} (${moderator.type} ${moderator.id})\n`;
-                    });
-                }
-                if(response.reader !== null && response.reader !== undefined){
-                    message += 'Подписчики:\n';
-                    response.reader.forEach((reader) => {
-                        message += `${reader.name} (${reader.type} ${reader.id})\n`;
-                    });
-                }
+                haveAdmin(message,response);
+                haveModerators(message,response);
+                haveReaders(message,response);
                 sendToUser(user_id,message);
             }
         );
+        return;
     }).catch(getErrorForCatch(user_id));
 };
 

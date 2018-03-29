@@ -16,8 +16,10 @@ WEBHOOK_HOST=\"$SERVER_DNS/tg\"
 API_TOKEN=\"$API_TOKEN\"
 DIALOG_FLOW_TOKEN=\"$DIALOG_FLOW_TOKEN\"
 WEBHOOK_LISTEN=\"0.0.0.0\"
-WEBHOOK_PORT=\"8002\"
-YANDEX_SPEECH_TOKEN=\"$YANDEX_SPEECH_TOKEN\"" > TgBot/config.py;
+WEBHOOK_PORT=\"8443\"
+YANDEX_SPEECH_TOKEN=\"$YANDEX_SPEECH_TOKEN\"
+WEBHOOK_SSL_CERT=\"$WEBHOOK_SSL_CERT\"
+WEBHOOK_SSL_PRIV=\"$WEBHOOK_SSL_CERT_PRIV\"" > TgBot/config.py;
   cat TgBot/config.py;         
   rm VkGroupBot/config.json;
   echo "{\"YANDEX_DEV_KEY\":\"$YANDEX_SPEECH_TOKEN\",
@@ -32,7 +34,7 @@ YANDEX_SPEECH_TOKEN=\"$YANDEX_SPEECH_TOKEN\"" > TgBot/config.py;
  echo "go get github.com/gorilla/mux
        go get github.com/lib/pq
        go build
-       ./go -dbhost=10.0.0.4 -dbport=5432 -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=http://$PRIVATE_HOST:8002 -vkbot=http://$PRIVATE_HOST:8000/send_message -port=8080" > main-server/run.sh;
+       ./go -dbhost=10.0.0.4 -dbport=5432 -dbuser=$PG_USER -dbpass=$PG_PASSWORD -dbname=botdb -tgbot=https://teamdev.website/tg/ -vkbot=https://teamdev.website/vk/send_message -port=8080" > main-server/run.sh;
  cat main-server/run.sh;
  sudo docker-compose build --no-cache;
  sudo docker-compose kill;
