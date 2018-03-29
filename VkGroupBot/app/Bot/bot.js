@@ -4,13 +4,30 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const HttpCallbackHandlersChank = require('./http_callback_handlers_chank');
 
+/**
+ * Обработчик всех входящих сообщений на сервер
+ * @class VkRequestHandler
+ * @module bot.js
+ */
 class VKRequestHandlerAll{
+    /**
+    * Конструктор класса
+    * @constructor
+     * @param {vkbot} [vkBot] Бот с сервером
+     * @param {webhook} [webhook] конфигуация webhook-a
+    */
     constructor(vkBot, webhook) {
         this.webhook = webhook;
         this.vkbot = vkBot;
     }
 
 
+    /**
+     * Проверка тела на наличие полей type и group_id
+     * @method
+     * @param request
+     * @param response
+    * */
     _checkRequiredParameters (request,response){
         if (!request.body.type || !request.body.group_id) {
             response.status(502).send('Required parameters are not found');
