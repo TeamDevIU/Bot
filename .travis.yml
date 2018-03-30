@@ -93,7 +93,7 @@ jobs:
           - git commit -m "Travis build ${TRAVIS_BUILD_NUMBER}";
           - git push --force --quiet --set-upstream origin master ;
           
-     - stage: create_docs_tgbot
+    - stage: create_docs_tgbot
       language: python
       before_script:
           - sudo add-apt-repository -y ppa:jonathonf/python-3.6
@@ -103,12 +103,14 @@ jobs:
           - sudo python3.6 get-pip.py
           - cd TgBot
           - sudo pip3.6 install -r requirements.txt 
-          - cd ..
+          - cd ..;
       script: 
-          - cd TgBot
+          - cd TgBot;
+          - ls -al;
           - mkdir ../../TGdocs
-          - ./docs_gen.sh ../../TGdocs 2&>/dev/null;
+          - ./docs_gen.sh ../../../TGdocs;
           - cd ../../TGdocs;
+          - ls -al;
           - git init;
           - git config --global user.email "travis@travis-ci.org";
           - git config --global user.name "Travis CI";
