@@ -14,11 +14,11 @@ import (
 )
 
 func init() {
-	USER = "test_user"
-	PASSWORD = "password"
-	DB_NAME = "db_for_test"
-	DB_ADRESS = "0.0.0.0"
-	DB_PORT = "5432"
+	User = "test_user"
+	Password = "password"
+	DbName = "db_for_test"
+	DbAdress = "0.0.0.0"
+	DbPort = "5432"
 	var buf bytes.Buffer
 	Logger = log.New(&buf, "logger: ", log.Lshortfile)
 }

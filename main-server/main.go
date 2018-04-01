@@ -16,14 +16,17 @@ import (
 )
 
 var (
+	// TelegramBotAdr хранит адресс, по которому необходимо отправлять сообщения telegram боту
 	TelegramBotAdr string
-	VKBotAdr       string
-	db             *Database
-	Logger         *log.Logger
+	// VKBotAdr хранит адресс, по которому необходимо отправлять сообщения telegram боту
+	VKBotAdr string
+	db       *Database
+	// Logger выполняет логирование сервера
+	Logger *log.Logger
 )
 
-// Создание комнаты
-func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
+// HandleCreateRoom отвечает за обработку запроса на создание комнаты
+func HandleCreateRoom(w http.ResponseWriter, r *http.Request) {
 	Logger.Print("handle create-room request from " + r.RemoteAddr)
 	body, _ := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -43,7 +46,7 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !checkStruct(createRoom) {
+	if !CheckStruct(createRoom) {
 		Logger.Print("incomplete request body")
 		resp := &CreateRoomResponse{
 			ID:  -1,
@@ -70,9 +73,10 @@ func handleCreateRoom(w http.ResponseWriter, r *http.Request) {
 	w.Write(respBody)
 }
 
-// Получение списка комнат, доступных пользователю
+// HandleGetRooms отвечает за обработку запроса на получение
+// списка комнат, доступных пользователю.
 // Выводит либо все группы, либо только те, которые можно удалять
-func handleGetRooms(w http.ResponseWriter, r *http.Request) {
+func HandleGetRooms(w http.ResponseWriter, r *http.Request) {
 	Logger.Print("handle get-rooms request from " + r.RemoteAddr)
 	// Получаем инфу о том, какой список надо вывести
 	role := r.URL.Query().Get("role")
@@ -112,8 +116,8 @@ func handleGetRooms(w http.ResponseWriter, r *http.Request) {
 	w.Write(respBody)
 }
 
-// Подписка юзера на комнату
-func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
+// HandeNewSubscribe обрабатывает запрос на подписку юзера на комнату
+func HandeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 	Logger.Print("handle new-subscribe request from " + r.RemoteAddr)
 	body, _ := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -131,7 +135,7 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !checkStruct(subscribe) {
+	if !CheckStruct(subscribe) {
 		Logger.Print("incomplete request body")
 		resp := &ErrorResponse{
 			Err: "Bad request body, check api docs",
@@ -156,8 +160,8 @@ func handeNewSubscribe(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// Отправка сообщений
-func handeSendMessage(w http.ResponseWriter, r *http.Request) {
+// HandeSendMessage обрабатывает запрос на оправку сообщений
+func HandeSendMessage(w http.ResponseWriter, r *http.Request) {
 	Logger.Print("handle send-message request from " + r.RemoteAddr)
 	body, _ := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
@@ -175,7 +179,7 @@ func handeSendMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !checkStruct(sendMessage) {
+	if !CheckStruct(sendMessage) {
 		Logger.Print("incomplete request body")
 		resp := &ErrorResponse{
 			Err: "Bad request body, check api docs",
@@ -251,6 +255,9 @@ func handleGetFullRoomInfo(w http.ResponseWriter, r *http.Request) {
 	w.Write(respBody)
 }
 
+// ServeMainServer подготавливает сервер к запуску.
+// Настраивается подключение к базе данных, по необходимости создаются таблицы
+// Устанавливаются функции на обработку запросов.
 func ServeMainServer() (http.Handler, error) {
 	var err error
 	if db, err = SetUpDatabase(); err != nil {
@@ -258,13 +265,13 @@ func ServeMainServer() (http.Handler, error) {
 	}
 	r := mux.NewRouter()
 
-	r.HandleFunc("/createRoom", handleCreateRoom).
+	r.HandleFunc("/createRoom", HandleCreateRoom).
 		Methods("POST")
-	r.HandleFunc("/rooms", handleGetRooms).
+	r.HandleFunc("/rooms", HandleGetRooms).
 		Methods("GET")
-	r.HandleFunc("/subscribe", handeNewSubscribe).
+	r.HandleFunc("/subscribe", HandeNewSubscribe).
 		Methods("POST")
-	r.HandleFunc("/sendMessage", handeSendMessage).
+	r.HandleFunc("/sendMessage", HandeSendMessage).
 		Methods("POST")
 	r.HandleFunc("/roomInfo", handleGetFullRoomInfo).
 		Methods("GET")
@@ -292,15 +299,13 @@ func main() {
 	dbPort := flag.String("dbport", "5432", "Database port")
 	flag.Parse()
 
-	USER = *user
-	PASSWORD = *password
-	DB_NAME = *dbName
-	DB_ADRESS = *dbHost
-	DB_PORT = *dbPort
+	User = *user
+	Password = *password
+	DbName = *dbName
+	DbAdress = *dbHost
+	DbPort = *dbPort
 	TelegramBotAdr = *telegramBotAdr
 	VKBotAdr = *vkBotAdr
-
-	fmt.Println(USER, PASSWORD, DB_NAME, DB_ADRESS, DB_PORT, TelegramBotAdr, VKBotAdr)
 
 	r, err := ServeMainServer()
 	if err != nil {

@@ -12,12 +12,14 @@ type Subscribe struct {
 	UserInfo UserInfo `json:"user_info"`
 }
 
+// SendMessage для парсинга запроса на отправку сообщения
 type SendMessage struct {
 	RoomID     int      `json:"room_id"`
 	Message    string   `json:"message"`
 	SenderInfo UserInfo `json:"sender_info"`
 }
 
+// ErrorResponse хранит тело ответа с одной ошибкой
 type ErrorResponse struct {
 	Err string `json:"error"`
 }
