@@ -4,7 +4,7 @@ import (
 	"reflect"
 )
 
-// CheckStruct проверяет структуру in на корректное заполнение
+// CheckStruct проверяет структуру in на корректное заполнение.
 // В структуре in должны храниться данные, пришедшие в теле запроса.
 func CheckStruct(in interface{}) bool {
 	val := reflect.ValueOf(in).Elem()

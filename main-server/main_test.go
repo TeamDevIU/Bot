@@ -7,10 +7,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/adams-sarah/test2doc/test"
 )
 
 func init() {
@@ -39,13 +40,24 @@ var (
 	client = &http.Client{Timeout: time.Second}
 )
 
+func myURLVarExtractorFn(req *http.Request) map[string]string {
+	str := req.URL.Query().Encode()
+	fmt.Println(str)
+	return make(map[string]string)
+}
+
 func TestAPI(t *testing.T) {
+	test.RegisterURLVarExtractor(myURLVarExtractorFn)
 	handler, err := ServeMainServer()
 	if err != nil {
 		panic(err)
 	}
 
-	ts := httptest.NewServer(handler)
+	ts, err := test.NewServer(handler)
+
+	if err != nil {
+		panic(err.Error())
+	}
 
 	cases := []Case{
 		// ========================= Создание комнаты =========================
@@ -380,4 +392,5 @@ func TestAPI(t *testing.T) {
 			continue
 		}
 	}
+	ts.Finish()
 }
