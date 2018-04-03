@@ -10,6 +10,7 @@ codebeat : [![codebeat badge](https://codebeat.co/badges/9b474ffc-d480-4ce8-b15c
 * Документация
   * [VkGroupBot](https://teamdeviu.github.io/VkBotDocs/)
   * [TgBot](https://teamdeviu.github.io/TgBotDocs/)
+  * [MainServer](https://teamdeviu.github.io/MainServerDocs/)
 
 **Group alerts bot** - бот для Telegram и ВКонтакте, позволяющий осуществлять рассылку важных сообщений группе пользователей.
 
