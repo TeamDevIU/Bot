@@ -57,14 +57,33 @@ jobs:
           - psql -c 'create database db_for_test;' -U postgres
           - psql -c "create user test_user with password 'password';" -U postgres
           - psql -c "GRANT ALL ON DATABASE db_for_test TO test_user;" -U postgres
+          - curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
+          - sh ./nodesource_setup.sh
+          - apt-get install nodejs
+          - apt-get install build-essential
           - cd main-server
           - go get github.com/gorilla/mux
           - go get github.com/lib/pq
+          - go get github.com/adams-sarah/test2doc
+          - npm i -g aglio
           - cd ..
       script: 
           - cd main-server
           - go test
+          - aglio -i main.apib -o index.html
           - cd ..
+          - mkdir ../../maindocs
+          - cp main-server/index.html ../../maindocs
+          - cd ../../TGdocs;
+          - ls -al
+          - git init;
+          - git config --global user.email "travis@travis-ci.org";
+          - git config --global user.name "Travis CI";
+          - git remote add origin https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/MainServerDocs.git > /dev/null 2>&1;
+          - git add . ;
+          - git commit -m "Travis build ${TRAVIS_BUILD_NUMBER}";
+          - git push --force --quiet --set-upstream origin master ;
+          
     - stage: deploy
       addons:
         ssh_known_hosts: 13.95.158.175
