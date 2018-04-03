@@ -4,7 +4,9 @@ import (
 	"reflect"
 )
 
-func checkStruct(in interface{}) bool {
+// CheckStruct проверяет структуру in на корректное заполнение.
+// В структуре in должны храниться данные, пришедшие в теле запроса.
+func CheckStruct(in interface{}) bool {
 	val := reflect.ValueOf(in).Elem()
 
 	for i := 0; i < val.NumField(); i++ {
@@ -21,12 +23,12 @@ func checkStruct(in interface{}) bool {
 			}
 		case reflect.Slice:
 			for j := 0; j < valueField.Len(); i++ {
-				if !checkStruct(valueField.Index(j).Addr().Interface()) {
+				if !CheckStruct(valueField.Index(j).Addr().Interface()) {
 					return false
 				}
 			}
 		case reflect.Struct:
-			if !checkStruct(valueField.Addr().Interface()) {
+			if !CheckStruct(valueField.Addr().Interface()) {
 				return false
 			}
 		default:
