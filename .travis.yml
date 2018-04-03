@@ -58,9 +58,9 @@ jobs:
           - psql -c "create user test_user with password 'password';" -U postgres
           - psql -c "GRANT ALL ON DATABASE db_for_test TO test_user;" -U postgres
           - curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
-          - sh ./nodesource_setup.sh
-          - apt-get install nodejs
-          - apt-get install build-essential
+          - sudo bash ./nodesource_setup.sh
+          - sudo apt-get install nodejs
+          - sudo apt-get install build-essential
           - cd main-server
           - go get github.com/gorilla/mux
           - go get github.com/lib/pq
