@@ -74,7 +74,7 @@ jobs:
           - cd ..
           - mkdir ../../maindocs
           - cp main-server/index.html ../../maindocs
-          - cd ../../TGdocs;
+          - cd ../../maindocs;
           - ls -al
           - git init;
           - git config --global user.email "travis@travis-ci.org";
