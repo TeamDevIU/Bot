@@ -10,7 +10,7 @@ echo "sys.path.insert(0, '../')" >> new_conf.py
 cat conf.py >> new_conf.py
 mv new_conf.py conf.py
 make singlehtml
-cp -r _build/html/* $1/
+cp -r _build/singlehtml/* $1/
 cd ..
 rm -rf docs
 
