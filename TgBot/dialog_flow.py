@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+"""Модуль для взаимодействия с DialogFlow
+
+:author: Melnikov Dmitry
+"""
+
 import json
 import apiai
 

@@ -9,19 +9,26 @@ import (
 )
 
 var (
-	USER      string
-	PASSWORD  string
-	DB_NAME   string
-	DB_ADRESS string
-	DB_PORT   string
+	// User хранит логин для подключения к бд
+	User string
+	// Password хранит пароль для подключения к бд
+	Password string
+	// DbName хранит имя бд
+	DbName string
+	// DbAdress хранит адрес для поключения к бд
+	DbAdress string
+	// DbPort хранит порт для подключения к бд
+	DbPort string
 )
 
+// Database является оберткой для стандартной структуры управления базой данных
 type Database struct {
 	*sql.DB
 }
 
+// SetUpDatabase установка подключения к базе данных и создание необходимых таблиц
 func SetUpDatabase() (*Database, error) {
-	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", DB_ADRESS, DB_PORT, USER, PASSWORD, DB_NAME))
+	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", DbAdress, DbPort, User, Password, DbName))
 	if err != nil {
 		return nil, err
 	}

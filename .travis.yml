@@ -9,6 +9,8 @@ stages:
     if: branch IN (development, master)
   - name: create_docs_vkbot
     if: branch = master
+  - name: create_docs_tgbot
+    if: branch = master
   - name: deploy
     if: branch = master
 
@@ -55,14 +57,33 @@ jobs:
           - psql -c 'create database db_for_test;' -U postgres
           - psql -c "create user test_user with password 'password';" -U postgres
           - psql -c "GRANT ALL ON DATABASE db_for_test TO test_user;" -U postgres
+          - curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
+          - sudo bash ./nodesource_setup.sh
+          - sudo apt-get install nodejs
+          - sudo apt-get install build-essential
           - cd main-server
           - go get github.com/gorilla/mux
           - go get github.com/lib/pq
+          - go get github.com/adams-sarah/test2doc
+          - npm i -g aglio
           - cd ..
       script: 
           - cd main-server
           - go test
+          - aglio -i main.apib -o index.html
           - cd ..
+          - mkdir ../../maindocs
+          - cp main-server/index.html ../../maindocs
+          - cd ../../maindocs;
+          - ls -al
+          - git init;
+          - git config --global user.email "travis@travis-ci.org";
+          - git config --global user.name "Travis CI";
+          - git remote add origin https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/MainServerDocs.git > /dev/null 2>&1;
+          - git add . ;
+          - git commit -m "Travis build ${TRAVIS_BUILD_NUMBER}";
+          - git push --force --quiet --set-upstream origin master ;
+          
     - stage: deploy
       addons:
         ssh_known_hosts: 13.95.158.175
@@ -73,6 +94,7 @@ jobs:
           - chmod +x .travis/deploy.sh
       script: 
           - .travis/deploy.sh
+          
     - stage: create_docs_vkbot
       language: node_js
       node_js: 
@@ -81,14 +103,38 @@ jobs:
           - cd VkGroupBot;
           - npm install;
           - grunt yuidoc;
-          - cd ../../;
-          - ls -al;
-          - cd VKdocs;
+          - cd ../../VKdocs;
           - git init;
           - git config --global user.email "travis@travis-ci.org";
           - git config --global user.name "Travis CI";
           - git remote add origin https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/VkBotDocs.git > /dev/null 2>&1;
           - git add . ;
           - git commit -m "Travis build ${TRAVIS_BUILD_NUMBER}";
-          - git push --quiet --set-upstream origin master ;
+          - git push --force --quiet --set-upstream origin master ;
+          
+    - stage: create_docs_tgbot
+      language: python
+      before_script:
+          - sudo add-apt-repository -y ppa:jonathonf/python-3.6
+          - sudo apt-get update
+          - sudo apt-get install python3.6 libpython3.6
+          - wget https://bootstrap.pypa.io/get-pip.py
+          - sudo python3.6 get-pip.py
+          - cd TgBot
+          - sudo pip3.6 install -r requirements.txt 
+          - cd ..;
+      script: 
+          - cd TgBot;
+          - ls -al;
+          - mkdir ../../TGdocs
+          - ./docs_gen.sh ../../../TGdocs;
+          - cd ../../TGdocs;
+          - ls -al;
+          - git init;
+          - git config --global user.email "travis@travis-ci.org";
+          - git config --global user.name "Travis CI";
+          - git remote add origin https://${GH_ACCESS_TOKEN}@github.com/TeamDevIU/TgBotDocs.git > /dev/null 2>&1;
+          - git add . ;
+          - git commit -m "Travis build ${TRAVIS_BUILD_NUMBER}";
+          - git push --force --quiet --set-upstream origin master ;
       
