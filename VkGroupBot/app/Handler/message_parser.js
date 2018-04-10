@@ -14,7 +14,7 @@ module.exports = class MessageParser {
             logger.error(`module: ${module.id} : attachments error title == undefined : ${JSON.stringify(message.attachments[0])}`);
             throw "attachments error";
         }
-        if (message.body === "" && (message.attachments[0].doc.title === "voice_message.webm" || message.attachments[0].doc.title === "audiocomment.3gp")){
+        if (message.body === "" &&  message.attachments[0].doc.title.match(/(\w)+\.(ogg|webm|3gp)/) !== null ){
             return 'audio';
         }
     }
