@@ -12,7 +12,7 @@ chardet==3.0.4
 decorator==4.2.1
 docutils==0.14
 future==0.16.0
-httplib2==0.10.3
+httplib2==0.18.0
 idna==2.6
 idna-ssl==1.0.0
 imagesize==1.0.0
