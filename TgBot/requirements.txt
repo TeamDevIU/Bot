@@ -24,7 +24,7 @@ Markdown==2.4.1
 MarkupSafe==1.0
 mccabe==0.6.1
 multidict==4.1.0
-numpy==1.14.0
+numpy==1.22.0
 packaging==17.1
 Pygments==2.2.0
 pylint==1.8.3
